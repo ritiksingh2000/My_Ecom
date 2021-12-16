@@ -266,7 +266,7 @@ def UpdateSellerDetails(request):
 def AddProduct(request):
     user = User.objects.get(id=request.user.id)
     seller = Seller.objects.get(User=user)
-
+    Image = request.FILES['image']
     name = request.POST['name']
     category = Category.objects.get(id=request.POST['category'])
     price = int(request.POST['price'])
@@ -276,7 +276,7 @@ def AddProduct(request):
     stock = int(request.POST['stock'])
     q = int(request.POST['q'])
         
-    product = Product.objects.create(Seller=seller, Name=name, Category=category, Desc=desc, Price=price, in_stock=stock, Discount=discount, Stock=q)
+    product = Product.objects.create(Image=Image, Seller=seller, Name=name, Category=category, Desc=desc, Price=price, in_stock=stock, Discount=discount, Stock=q)
     product.save()
 
     info(request, f"You have created {name} Product Successfully.")
