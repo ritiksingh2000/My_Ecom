@@ -218,7 +218,7 @@ def BecomeSeller(request):
     customer = Customer.objects.get(User=user)
     user_adderss = User_Address.objects.get(User=user)
 
-    seller_logo = request.POST['seller_logo']
+    seller_logo = request.FILES['seller_logo']
     seller_name = request.POST['seller_name']
     seller_email = request.POST['seller_email']
     seller_phno = request.POST['seller_ph']
