@@ -20,10 +20,9 @@ def HomePage(request):
     items = 0
     customer_review = Customer_Review.objects.all()
     if request.user.is_authenticated == True:
-        customer_v = Customer.objects.filter(User=request.user.id)
         user = User.objects.get(id=request.user.id)
         
-        if customer_v.exists():
+        if Customer.objects.filter(User=request.user.id).exists():
             user = Customer.objects.get(User=request.user.id)
             pp = f"{user.User_Img}"
         else:
