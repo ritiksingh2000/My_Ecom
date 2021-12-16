@@ -22,7 +22,6 @@ def HomePage(request):
     if request.user.is_authenticated == True:
         customer_v = Customer.objects.filter(User=request.user.id)
         user = User.objects.get(id=request.user.id)
-        customer = Customer.objects.get(User=user)
         
         if customer_v.exists():
             user = Customer.objects.get(User=request.user.id)
@@ -34,6 +33,8 @@ def HomePage(request):
             user_address = User_Address.objects.create(User=user)
             user_address.save()
             return redirect("homepage")
+        
+        customer = Customer.objects.get(User=user)
         
         category = Category.objects.all()
         product = Product.objects.all()
