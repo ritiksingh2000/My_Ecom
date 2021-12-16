@@ -171,7 +171,7 @@
                           <div class="col-md-8">
                             <div class="p-1">
                                 <h5 class="h4">{{product.Name}} </h5>
-                                <p class="card-text small">{{product.Desc}}</p>
+                                <p class="card-text small p-2">{{product.Desc|slice:":100"}}...</p>
                                 {% if product.Discount == 0 %}
                                 <p>Rs.{{product.Price}} </p>
                                 {% else %}
@@ -324,7 +324,7 @@
                                                     Enter Price In Rupees Only!
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 my-2 row">
+                                            <div class="col-md-12 my-2 row">
                                                 <label for="addproduct" class="col-sm-4 col-form-label">Product Image</label>
                                                 <div class="col-sm-8">
                                                     <input type="file" name="image" class="form-control" id="addproduct">
