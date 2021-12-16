@@ -1,0 +1,260 @@
+{% load static %}
+<nav class="navbar navbar-expand-md shadow-lg navbar-dark bg-light">
+    <div class="container-lg">
+        <a class="text-decoration-none text-dark fs-2 text-dark fw-bold" href="{% url 'homepage' %}">💻My Ecom</a>
+        <button class="navbar-toggler m-0 bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor02">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <div class="dropdown py-1 my-1">
+                        <button class="btn btn-outline-dark p-1 m-1 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://img.icons8.com/material-two-tone/24/000000/diversity.png"/> Categories
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            {% for category in category reversed %}
+                            <li><a class="dropdown-item" href="{% url 'products_page' category.id %}">{{category.Name}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <a class="nav-link text-dark" href="#"></a>
+                </li>
+                
+                <li class="nav-item py-1">
+                    <a class="nav-link text-dark my-1" href="{% url 'all_products' %}">📦Products</a>
+                </li>
+                <li class="nav-item py-1">
+                    <a class="nav-link text-dark my-1" href="{% url 'about_us' %}">📜About</a>
+                </li>
+                <li class="nav-item py-1">
+                    <a class="nav-link text-dark my-1" href="{% url 'contact_us' %}">❔Contact Us</a>
+                </li>
+                
+            </ul>
+        </div>
+        <button type="button" class="btn btn-outline-dark mx-0 mx-lg-2 px-2 shadow-sm small" data-bs-toggle="modal" data-bs-target="#search">
+            🔎
+        </button>
+        {% if user.is_authenticated == True %}
+        <button type="button" class="btn btn-sm m-1 px-1 shadow-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#User">
+            <img src="/upload/{{ pp }}" width="28px"/> 
+            {{user.username}}
+        </button>
+        {% else %}
+        <button type="button" class="btn btn-sm m-1 px-1 shadow-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#Account">
+            <img src="/upload/upload/Profile_img/download.png" width="28px"/> 
+            My Account
+        </button>
+        {% endif %}
+        
+        <button type="button" class="btn btn-outline-dark mx-0 mx-lg-2 px-2 shadow-sm small" data-bs-toggle="modal" data-bs-target="#cart">
+            🛒
+        </button>
+        
+    </div>
+</nav>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="search" tabindex="-1" aria-labelledby="search" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="search">Search My Ecom</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'serach' %}" method="post">
+                    {% csrf_token %}
+                <div class="row m-0 p-0">
+                    <div class="col-9 p-2">
+                        <input type="text" placeholder="Search" name="search" id="search" class="form-control">
+                    </div>
+                    <div class="col-3 p-2">
+                        <button type="submit" class="btn-outline-dark btn">Search</button>
+                    </div>
+                </div>
+                </form>
+            <p class="text-center text-muted fst-italic my-3">Search the product term you are looking for.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="cart" tabindex="-1" aria-labelledby="cart" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cart">My Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if cart.exists %}
+                <form action="#" method="post" id="main"></form>
+                <form action="{% url 'update_cart' %}" id=update method="GET"></form>
+                {% for cart in cart %}
+                <div class="row p-0 shadow my-2 mx-0">
+                    <div class="col-3 p-1">
+                        <img src="/upload/{{cart.Product.Image}}" class="img-fluid">
+                    </div>
+                    <div class="col-7 px-1 py-2">
+                        <p class="h5">{{cart.Product.Name}}</p>
+                        <hr class="my-1">
+                        {% if cart.Discount == 0 or cart.Product.Discount == "0" %}
+                        <p class="fw-bold fs-4">&#x20B9;{{cart.Product.Price }}.00 </p>
+                        {% else %}
+                        <p class="fs-4"><b>&#x20B9;{{ cart.Product.Discount }}.00</b> <strike class="text-muted small fst-italic">&#x20B9;{{cart.Product.Price}}.00</strike></p>
+                        {% endif %}
+                        
+                        {% if cart.Discount == 0 or cart.Product.Discount == "0" %}
+                        <p class="fw-bold fs-6"><b>Total :</b> &#x20B9;{{cart.Price }}.00 </p>
+                        {% else %}
+                        <p class="fs-6"><b>Total :</b><b>&#x20B9;{{ cart.Discount }}.00</b> <strike class="text-muted small fst-italic">&#x20B9;{{cart.Price}}.00</strike></p>
+                        {% endif %}
+                        
+                        <div class="input-group input-group-sm my-0 small" style="max-width: 185px;">
+                            <span class="input-group-text bg-white border p-1 small border-secondary" id="inputGroup-sizing-sm">Quantity</span>
+                            <input type="hidden" form="update" value="{{forloop.counter}}" name="ln">
+                            <input type="hidden" form="update" value="{{cart.id}}" name="id">
+                            <input type="hidden" form="update" value="{{cart.Product.id}}" name="p_id">
+                            <input type="number" value="{{cart.Quantity}}" class="form-control" form="update" name="q{{forloop.counter}}">
+                            <span class="input-group-text bg-white border border-secondary" id="inputGroup-sizing-sm"><button type="submit" form="update" class="btn btn-dark small p-1">Update</button></span>
+                        </div>
+                    </div>
+                    <div class="col-2 p-1">
+                        <a href="{% url 'remove_product' cart.id %}?p_id={{cart.Product.id}}" class="btn btn-outline-light small">❌</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </form>
+            {% else %}
+            <p class="lead">No Product In Cart</p> 
+            {% endif %}
+        </div>
+    </div>
+</div>
+</div>
+
+
+<!-- User Modal -->
+<div class="modal fade" id="User" tabindex="-1" aria-labelledby="User" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="User">{{user.username}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <br>
+                <center>
+                    <a href="{% url 'user_profile' %}" class="btn btn-outline-dark">My Profile</a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-dark">My Orders</a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger">LogOut</a>
+                    
+                </center>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Account Modal -->
+<div class="modal fade" id="Account" tabindex="-1" aria-labelledby="Account" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="Account">Login | SignUp</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-Login-tab" data-bs-toggle="tab" data-bs-target="#nav-Login" type="button" role="tab" aria-controls="nav-Login" aria-selected="true"><b>Login</b></button>
+                        <button class="nav-link" id="nav-Signup-tab" data-bs-toggle="tab" data-bs-target="#nav-Signup" type="button" role="tab" aria-controls="nav-Signup" aria-selected="false"><b>Signup</b></button>
+                    </div>
+                </nav>
+                <!-- User Login -->
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-Login" role="tabpanel" aria-labelledby="nav-Login-tab">
+                        <form action="{% url 'user_login' %}" method="post" class="p-2">
+                            {% csrf_token %}
+                            <div class="form-floating my-3">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
+                                <label for="email" >Email address</label>
+                            </div>
+                            <div class="form-floating my-3">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                                <label for="password">Password</label>
+                            </div>
+                            <button type="submit" class="btn btn-outline-dark">Login</button>
+                        </form>
+                    </div>
+                    
+                    <!-- User Signup -->
+                    <div class="tab-pane fade" id="nav-Signup" role="tabpanel" aria-labelledby="nav-Signup-tab">
+                        
+                        <form action="{% url 'user_signup' %}" method="post" class="p-2">
+                            {% csrf_token %}
+                            <div class="row m-0 p-0">
+                                <div class="col-6 mx-auto">
+                                    <div class="form-floating my-1">
+                                        <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name">
+                                        <label for="first_name">First Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 mx-auto">
+                                    <div class="form-floating my-1">
+                                        <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name">
+                                        <label for="last_name">Last Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-12 mx-auto">
+                                    <div class="form-floating my-1">
+                                        <input type="text" class="form-control" id="Username" name="username" placeholder="Username">
+                                        <label for="Username">Username</label>
+                                    </div>
+                                </div>
+                                <div class="col-12 mx-auto">
+                                    <div class="form-floating my-1">
+                                        <input type="email" class="form-control" name="email" id="Email" placeholder="Email">
+                                        <label for="Email">Email</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="row m-0 p-0">
+                                    <div class="col-6 mx-auto">
+                                        <div class="form-floating my-1">
+                                            <input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
+                                            <label for="pass">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mx-auto">
+                                        <div class="form-floating my-1">
+                                            <input type="password" class="form-control" id="c_pass" name="c_pass" placeholder="Confirm Password">
+                                            <label for="c_pass">Confirm Password</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-outline-dark">Signup</button>
+                            </form>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% for message in messages %}
+<div class="alert alert-warning my-3 mx-auto fw-bold alert-dismissible fade show" style="max-width: 50%;" role="alert">
+    <center>{{message}}</center>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+

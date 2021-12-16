@@ -1,0 +1,457 @@
+{% if customer.is_seller == 1 %}
+<ul class="nav nav-tabs shadow rounded" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="seller_profile-tab" data-bs-toggle="tab" data-bs-target="#seller_profile" type="button" role="tab" aria-controls="seller_profile" aria-selected="true">My Profile</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="Seller_Order-tab" data-bs-toggle="tab" data-bs-target="#Seller_Order" type="button" role="tab" aria-controls="Seller_Order" aria-selected="false">My Orders</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="My_Products-tab" data-bs-toggle="tab" data-bs-target="#My_Products" type="button" role="tab" aria-controls="My_Products" aria-selected="false">My Products</button>
+    </li>
+</ul>
+
+<div class="tab-content py-3" id="myTabContent">
+    <div class="tab-pane fade bg-light show active shadow" id="seller_profile" role="tabpanel" aria-labelledby="seller_profile-tab">
+        <div class="row m-0 p-0 border border-dark rounded">
+            <div class="col-md-4 px-2 py-4">
+                <img src="/upload/{{seller.Business_Logo}}" class="img-fluid">
+            </div>
+            <div class="col-md-8 px-2 py-4">
+                <p class="p-1"><b>Seller : </b>{{seller.Seller_Name}}</p>
+                <p class="p-1"><b>Phone No : </b>{{seller.Seller_PhoneNo}}</p>
+                <p class="p-1"><b>Email : </b>{{seller.Seller_Email}}</p>
+                <p class="p-1"><b>Address : </b>{{seller.Address}}, {{seller.State}}, {{seller.Country}}-{{seller.Pincode}}</p>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Update Seller Details
+                </button>
+                    <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#Seller_logo">
+                        Update Logo
+                    </button>
+                    <div class="modal fade" id="Seller_logo" tabindex="-1" aria-labelledby="Seller_logo" aria-hidden="true">
+                        <div class="modal-dialog " style="min-width: 80%;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="Seller_logo">{{seller.Seller_Name}} Logo Update</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form enctype="multipart/form-data" action="{% url 'update_image' %}" method="POST" class="shadow p-md-3">
+                                        {% csrf_token %}
+                                        <div class="my-2">
+                                            <label for="formFileLg" class="form-label">Select New Seller Logo</label>
+                                            <input class="form-control form-control-lg" name="image" id="formFileLg" type="file">
+                                            <input type="hidden" name="of" value="seller">
+                                            <input type="hidden" name="id" value="{{seller.id}}">
+                                          </div>
+                                          <button type="submit" class="btn btn-outline-dark my-2">Update Logo</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="min-width: 70%;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">{{user.username}} Update</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form enctype="multipart/form-data" action="{% url 'update_image' %}" method="POST" class="shadow">
+                                    {% csrf_token %}
+                                    <div class="row p-0 m-0">
+                                        <div class="col-md-6 p-2 my-2">
+                                            <label for="Seller_Name" class="form-label">Seller Name</label>
+                                            <input type="text" name="seller_name" value="{{seller.Seller_Name}}" class="form-control" id="Seller_Name" >
+                                        </div>
+                                        <div class="col-md-6 p-2 my-2">
+                                            <label for="Seller_Email" class="form-label">Seller Email</label>
+                                            <input type="email" name="seller_email" value="{{seller.Seller_Email}}" class="form-control" id="Seller_Email" >
+                                        </div>
+                                        <div class="col-md-6 p-2 my-2">
+                                            <label for="Phone_No" class="form-label">Phone No.</label>
+                                            <input type="tel" name="seller_phno" value="{{seller.Seller_PhoneNo}}" class="form-control" id="Phone_No" >
+                                        </div>
+                                        <div class="col-md-6 p-2 my-2">
+                                            <label for="Address" class="form-label">Address</label>
+                                            <input type="text" name="address" value="{{seller.Address}}" class="form-control" id="Address" >
+                                        </div>
+                                        <div class="col-md-4 p-2 my-2">
+                                            <label for="State" class="form-label">State</label>
+                                            <input type="text" name="state" value="{{seller.State}}" class="form-control" id="State" >
+                                        </div>
+                                        <div class="col-md-4 p-2 my-2">
+                                            <label for="Country" class="form-label">Country</label>
+                                            <input type="text" name="country" value="{{seller.Country}}" class="form-control" id="Country" >
+                                        </div>
+                                        <div class="col-md-4 p-2  my-2">
+                                            <label for="Pincode" class="form-label">Pincode</label>
+                                            <input type="text" name="pincode" value="{{seller.Pincode}}" class="form-control" id="Pincode" >
+                                        </div>
+                                        
+                                    </div>
+                                    <button type="submit" class="btn mx-2 my-2 btn-outline-dark">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade bg-light shadow" id="Seller_Order" role="tabpanel" aria-labelledby="Seller_Order-tab">
+        <div class="row m-0 p-0 border border-dark rounded">
+            {% if order == None %}
+            <p class="h4 p-3">No orders Yet.</p>
+            {% else %}
+            <div class="border border-dark rounded p-3">
+                <style type="text/css">
+                    .tg  {border-collapse:collapse;border-spacing:0;}
+                    .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+                        overflow:hidden;padding:10px 5px;word-break:normal;}
+                        .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+                            font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+                            .tg .tg-0lax{text-align:left;vertical-align:top}
+                        </style>
+                        <table class="tg rounded" style="min-width: 95%;">
+                            <thead>
+                                <tr>
+                                    <th class="tg-0lax fw-bold">Product</th>
+                                    <th class="tg-0lax fw-bold">Quantity</th>
+                                    <th class="tg-0lax fw-bold">Total Price</th>
+                                    <th class="tg-0lax fw-bold">Status</th>
+                                    <th class="tg-0lax fw-bold">Address</th>
+                                    <th class="tg-0lax fw-bold">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="tg-0lax">Product Name</td>
+                                    <td class="tg-0lax">2</td>
+                                    <td class="tg-0lax">Rs.300.00</td>
+                                    <td class="tg-0lax">Not Confirmed</td>
+                                    <td class="tg-0lax">skvbjsv New Delhi india</td>
+                                    <td class="tg-0lax"><small><button class="btn btn-dark">Update</button></small></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="tab-pane fade bg-light shadow p-0" id="My_Products" role="tabpanel" aria-labelledby="My_Products-tab">
+                <div class="row m-0 p-0 border border-dark rounded">
+                    {% if product == None %}
+                    <div class="col-12 p-3">
+                        <p class="p-3 h4">No Products Yet.</p>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-info m-3" data-bs-toggle="modal" data-bs-target="#Add_Product">
+                            Add Your First Product
+                        </button>
+                    </div>
+                    
+                    
+                    {% else %}
+                    <div style="background-color: rgb(0,0,0,0.1);" class="col-12 my-2"><span class="text-center mx-md-3 h4">{{seller.Seller_Name}} Products</span> <button type="button" class="btn btn-success m-3" data-bs-toggle="modal" data-bs-target="#Add_Product">
+                        Add New Product
+                    </button></div>
+                    {% for product in product %}
+                    <div class="col-lg-6 mb-3">
+                        
+                        <div class="row g-0 shadow bg-white p-3">
+                            
+                          <div class="col-md-4">
+                            <img src="/upload/{{product.Image}}" class="img-fluid rounded-start">
+                          </div>
+                          <div class="col-md-8">
+                            <div class="p-1">
+                                <h5 class="h4">{{product.Name}} </h5>
+                                <p class="card-text small">{{product.Desc}}</p>
+                                {% if product.Discount == 0 %}
+                                <p>Rs.{{product.Price}} </p>
+                                {% else %}
+                                <p>&#x20B9;{{product.Discount}} <strike class="text-muted small">&#x20B9;{{product.Price}}</strike></p>
+                                {% endif %}
+                                
+                                <ul class="list-group small list-group-flush">
+                                    <li class="list-group-item"><b>Category : </b>{{product.Category}}</li>
+                                    <li class="list-group-item"><b>Quantity : </b>{{product.Stock}}</li>
+                                    <li class="list-group-item"><b>Status : </b>
+                                        {% if product.in_stock == 1 %}
+                                            Active
+                                        {% else %}
+                                            Disabled
+                                        {% endif %}
+                                    </li>
+                                  </ul>
+                                  <small><span><button type="button" class="btn btn-success m-3" data-bs-toggle="modal" data-bs-target="#Update_Product{{ forloop.counter }}">
+                                    Update Details
+                                </button></span><span> <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#Product_Image_Update{{ forloop.counter }}">
+                                    Update Image
+                                </button></span>
+                                <div class="modal fade" id="Product_Image_Update{{ forloop.counter }}" tabindex="-1" aria-labelledby="Product_Image_Update" aria-hidden="true">
+                                    <div class="modal-dialog " style="min-width: 80%;">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="Product_Image_Update">{{product.Name}} Image Update</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form enctype="multipart/form-data" action="{% url 'update_image' %}" method="POST" class="shadow p-md-3">
+                                                    {% csrf_token %}
+                                                    <div class="my-2">
+                                                        <label for="formFileLg" class="form-label">Select New Product image</label>
+                                                        <input class="form-control form-control-lg" name="image" id="formFileLg" type="file">
+                                                        <input type="hidden" name="of" value="product">
+                                                        <input type="hidden" name="id" value="{{product.id}}">
+                                                      </div>
+                                                      <button type="submit" class="btn btn-outline-dark my-2">Update Image</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div></small>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal fade" id="Update_Product{{ forloop.counter }}" tabindex="-1" aria-labelledby="Update_Product" aria-hidden="true">
+                        <div class="modal-dialog" style="min-width: 80%;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="Update_Product">Update {{product.Name}}</h5> 
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{% url 'update_product' product.id %}" enctype="multipart/form-data" method="post" class="px-2">
+                                        {% csrf_token %}
+                                        <div class="row p-0 m-0">
+                                            <div class="col-md-10 mx-auto my-1">
+                                                <div class="alert py-2 text-center alert-warning" role="alert">
+                                                    Enter Price In Rupees Only!
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-2">
+                                                <div class="row m-0 p-0">
+                                                    <div class="col-md-4 p-2">
+                                                        <img src="/upload/{{product.Image}}" width="200px" class="img-fluid">
+                                                    </div>
+                                                    <div class="col-md-8 p-2">
+                                                        <div class="my-3 row">
+                                                            <label for="Update_Product" class="col-sm-4 col-form-label">Product Name</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" value="{{product.Name}}" name="name" class="form-control" id="Update_Product">
+                                                            </div>                                                
+                                                        </div>
+                                                        <div class="my-3 row">
+                                                            <label for="cat" class="col-sm-4 col-form-label">Category</label>
+                                                            <div class="col-sm-8">
+                                                                <select name="category" required id="cat" class=" form-select">
+                                                                    {% for category in category %}
+                                                                    <option value="{{category.id}}">{{category.Name}}</option>
+                                                                    {% endfor %}   
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="my-3 row">
+                                                            <label for="Update_Product" class="col-sm-4 col-form-label">Product Price</label>
+                                                            <div class="col-sm-8">
+                                                                <input type="number" value="{{product.Price}}" required name="price" class="form-control" id="Update_Product">
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="my-3 row">
+                                                            <label for="Update_Product" class="col-sm-4 col-form-label">Discount Price
+                                                                <br><small class="text-muted small">Enter 0 if there is No discount</small>
+                                                            </label>
+                                                            <div class="col-sm-8">
+                                                                <input type="number" value="{{product.Discount}}" required name="d_price" class="form-control" id="Update_Product">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                                                                
+                                            </div>
+                                            
+                                                                                        
+                                            <div class="col-md-12 mx-auto my-2">
+                                                <label for="desc" class="form-label">Product Description</label>
+                                                <textarea name="desc" class="form-control" id="desc" rows="4">{{product.Desc}}</textarea>
+                                            </div>
+                                            <div class="col-md-5 mx-auto my-2 form-check"><label for="Status" class="col-form-label">Product Status</label>
+                                                <select required class="form-select" id="Status" name="stock">
+                                                    <option value="1">Active</option>
+                                                    <option value="0">Disables</option>
+                                                  </select>
+                                            </div> 
+                                            <div class="col-md-5 my-2 mx-auto">
+                                                <label for="Update_Product" class="col-form-label">Product Quantity</label>
+                                                <div class="">
+                                                    <input type="number" value="{{product.Stock}}" required name="q" class="form-control" id="Update_Product">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mx-auto">
+                                                <button type="submit" class="mx-auto text-center btn-lg btn btn-outline-success my-2">Update Product</button>
+                                            </div>
+                                        </div>
+                                        
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    <!-- Modal -->
+                    <div class="modal fade" id="Add_Product" tabindex="-1" aria-labelledby="Add_Product" aria-hidden="true">
+                        <div class="modal-dialog" style="min-width: 80%;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="Add_Product">Add Product</h5> 
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{% url 'add_product' %}" enctype="multipart/form-data" method="post" class="px-2">
+                                        {% csrf_token %}
+                                        <div class="row p-0 m-0">
+                                            <div class="col-md-10 mx-auto my-1">
+                                                <div class="alert py-2 text-center alert-warning" role="alert">
+                                                    Enter Price In Rupees Only!
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 my-2 row">
+                                                <label for="addproduct" class="col-sm-4 col-form-label">Product Name</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" name="name" class="form-control" id="addproduct">
+                                                </div>                                                
+                                            </div>
+                                            <div class="col-md-6 my-2 px-4 row">
+                                                <select name="category" class="form-select">
+                                                    {% for category in category %}
+                                                    <option value="{{category.id}}">{{category.Name}}</option>
+                                                    {% endfor %}   
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 my-2 row">
+                                                <label for="addproduct" class="col-sm-4 col-form-label">Product Price</label>
+                                                <div class="col-sm-8">
+                                                    <input type="number" required name="price" class="form-control" id="addproduct">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-6 my-2 row">
+                                                <label for="addproduct" class="col-sm-4 col-form-label">Discount Price
+                                                    <small class="text-muted small">Enter 0 if there is No discount</small>
+                                                </label>
+                                                <div class="col-sm-8">
+                                                    <input type="number" value="0" required name="d_price" class="form-control" id="addproduct">
+                                                </div>
+                                            </div>                                            
+                                            <div class="col-md-12 mx-auto my-2">
+                                                <label for="desc" class="form-label">Product Description</label>
+                                                <textarea name="desc" class="form-control" id="desc"></textarea>
+                                                
+                                            </div>
+                                            <div class="col-md-5 mx-3 my-2 form-check">
+                                                <label for="addproduct" class="col-form-label">Product Quantity</label>
+                                                <div class="">
+                                                    <input type="number" required name="q" class="form-control" id="addproduct">
+                                                </div>
+                                                <br>
+                                                <select class="form-select" name="stock">
+                                                    <option value="1">Active</option>
+                                                    <option value="0">Disables</option>
+                                                  </select>
+                                                <br>
+                                                <button type="submit" class="btn btn-outline-dark my-2">Create Product</button>
+                                            </div>
+                                        </div>
+                                        
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            {% else %}
+            {% if customer.e_verify == 0 and customer.p_verify == 0 %}
+            <div class="alert fs-4 alert-danger mx-auto d-flex align-items-center" role="alert">
+                
+                ⚠ To Access The Seller Center Please Verify Your Email And Phone Number.
+                
+            </div>
+            {% elif customer.e_verify == 1 and customer.p_verify == 1 %}
+            <div class="border border-dark p-2 rounded">
+                <div class="card-header">
+                    <div class="alert fs-5 alert-success mx-auto d-flex align-items-center" role="alert">
+                        
+                        ✔ You are verified to become a seller. Please fill the form to become a seller.
+                        
+                    </div>
+                </div>
+                <form enctype="multipart/form-data" action="{% url 'become_seller' %}" method="post" class="m-2">
+                    {% csrf_token %}
+                    <h3 class="h4 p-2">
+                        Business Details
+                    </h3>
+                    <div class="my-3">
+                        <label for="seller_logo" class="form-label">Seller Logo</label>
+                        <input class="form-control" type="file" name="seller_logo" id="seller_logo">
+                    </div>
+                    <div class="my-2 row">
+                        <label for="seller_name" class="col-sm-3 my-2 col-form-label">Seller Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="seller_name" id="seller_name">
+                            <small class="text-muted">This is your business name.</small>
+                        </div>
+                    </div>
+                    <div class="my-2 row">
+                        <label for="s_ph_no" class="col-sm-3 my-2 col-form-label">Phone Number</label>
+                        <div class="col-sm-9">
+                            <input type="tel" class="form-control" value="{{customer.Phone_No}}" id="s_ph_no" name="seller_ph">
+                            <small class="text-muted">This is your business number</small>
+                        </div>
+                    </div>
+                    <div class="my-2 row">
+                        <label for="seller_email" class="col-sm-3 my-2 col-form-label">Business Email</label>
+                        <div class="col-sm-9">
+                            <input type="email" class="form-control" value="{{user.email}}" id="seller_email" name="seller_email">
+                            <small class="text-muted">This is your business email</small>
+                        </div>
+                    </div>
+                    <h3 class="h4 p-2">
+                        Business Address
+                    </h3>
+                    <div class="row m-0 p-0">
+                        <div class="col-md-6 my-2">
+                            <label for="Address" class="form-label">Address</label>
+                            <input type="text" class="form-control" name="seller_address" id="Address">
+                        </div>
+                        <div class="col-md-6 my-2">
+                            <label for="state" class="form-label">State</label>
+                            <input type="text" class="form-control" id="state" name="seller_state">
+                        </div>
+                        <div class="col-md-6 my-2">
+                            <label for="country" class="form-label">Country</label>
+                            <input type="text" class="form-control" id="country" name="seller_country">
+                        </div>
+                        <div class="col-md-6 my-2">
+                            <label for="Pincode" class="form-label">Pincode</label>
+                            <input type="tel" class="form-control" id="Pincode" name="seller_pincode">
+                        </div>
+                        <button type="submit" class="my-2 py-3 h-4 btn-lg btn btn-outline-success">Become Seller</button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+            {% endif %}
+            
+        </div>

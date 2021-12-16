@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>{{user.username}} | Profile</title>
+{% endblock %}
+
+{% block main %}
+{% load static %}
+
+<div class="m-2 p-2">
+    <div class="card-body bg-light rounded shadow-lg">
+        <div class="d-flex align-items-start">
+            <div class="nav flex-column nav-pills m-2 p-2 rounded" style="background-color: rgb(0,0,0,0.1);min-width: 15%;" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <button class="nav-link active my-2" id="v-pills-Profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Profile" type="button" role="tab" aria-controls="v-pills-Profile" aria-selected="true">Profile</button>
+                <button class="nav-link my-2" id="v-pills-Order-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Order" type="button" role="tab" aria-controls="v-pills-Order" aria-selected="false">My Order</button>
+                <button class="nav-link my-2" id="v-pills-Verification-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Verification" type="button" role="tab" aria-controls="v-pills-Verification" aria-selected="false"><small>{{verified}}Verification</small></button>
+                <button class="nav-link my-2" id="v-pills-Seller-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Seller" type="button" role="tab" aria-controls="v-pills-Seller" aria-selected="false"><small>Seller Space</small></button>
+            </div>
+            <div class="tab-content p-2" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-Profile" role="tabpanel" aria-labelledby="v-pills-Order-tab">
+                    {% include 'profile_tab.html'   %}
+                </div>
+                <div class="tab-pane fade" id="v-pills-Order" role="tabpanel" style="min-width: 50%;" aria-labelledby="v-pills-Order-tab">
+                    {% include 'my_order_tab.html'   %}
+                </div>
+                <div class="tab-pane fade p-2" id="v-pills-Verification" role="tabpanel" aria-labelledby="v-pills-Verification-tab">
+                    {% include 'verification_tab.html'   %}
+                </div>
+                <div class="tab-pane fade  p-2" id="v-pills-Seller" role="tabpanel" aria-labelledby="v-pills-Seller-tab">
+                    {% include 'seller_space_tab.html'   %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

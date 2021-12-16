@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>My Ecom</title>
+{% endblock %}
+
+{% block main %}
+{% load static %}
+
+<div class="row m-0 p-0">
+    <div class="col-md-9 mx-auto p-2">
+        <div class="card shadow">
+            <div class="card-header">
+                <p class="h3 text-center">You looked Up For : {{search_term}}</p>
+            </div>
+            <div class="card-body row m-0 p-0">
+
+                {% if products.exists %}
+                    {% for products in products %}
+                        {% if search_term in products.Name or search_term in products.Desc %}
+                        <div class="col-md-4 my-3 text-center mx-auto p-2">
+					
+                            <div class="card shadow" style="background-color: rgb(0,0,0,0.02);">
+                                <a href="{% url 'product_page' products.id %}" class="text-dark text-decoration-none">
+                                <img src="/upload/{{products.Image}}" class="card-img-top img-fluid">
+                                <div class="card-body p-1">
+                                    <h5 class="card-title h4">{{products.Name}}</h5>
+                                    <p class="card-text">
+                                        {% if products.Discount == 0 %}
+                                        <p class="fw-bold fs-4">&#x20B9;{{products.Price}} </p>
+                                        {% else %}
+                                        <p class="fs-4"><b>&#x20B9;{{products.Discount}}</b> <strike class="text-muted small fst-italic">&#x20B9;{{products.Price}}</strike></p>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                </a>
+                                <div class="card-body py-0 mt-0 mb-2">
+                                    <a href="{% url 'add_cart' products.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
+                                    <a href="#" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Buy Now</a>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p class="h2 m-2">No Product Related To {{search_term}}</p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

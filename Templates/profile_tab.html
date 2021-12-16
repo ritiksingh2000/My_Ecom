@@ -1,0 +1,126 @@
+<div class="border rounded border-dark">
+    <h1 class="h4 text-center mx-auto my-2">{{user.username}} Details</h1>
+    <hr class="my-3">
+    <div class="row p-0 m-0">
+        <div class="col-md-4 p-3">
+            <img src="/upload/{{customer.User_Img}}" alt="" class="img-fluid">
+        </div>
+        <div class="col-md-8 row m-0 p-1">
+            <div class="col-md-5 p-2">
+                <p class="rounded"><b>Name :</b> {{user.first_name}} {{user.last_name}}</p>
+            </div>
+            <div class="col-md-5 p-2">
+                <p class="rounded"><b>Username :</b> {{user.username}}</p>
+            </div>
+            <div class="col-md-5 p-2">
+                <p class="rounded"><b>Email :</b> {{user.email}}</p>
+                <p class="rounded"><b>Phone Number :</b> {{customer.Phone_No}}</p>
+            </div>
+            <div class="col-md-5 p-2">
+                <p class="rounded"><b>Date Joined :</b> {{user.date_joined}}</p>
+                <p class="rounded"><b>Last Login :</b> {{user.last_login}}</p>
+                
+            </div>
+            {% if is_address == True %}
+            <div class="px-3 mb-3">
+                <div class="card shadow" style="max-width: 40%;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{user.username}} - Address</h5>
+                        <h6 class="card-subtitle mb-2 text-muted"><b>Country : </b>{{address.Country}}</h6>
+                        <p class="card-text">{{address.Address}}, {{address.State}}, {{address.Pincode}}</p>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            
+            {% else %}
+            <p class="h5 fw-bold">No Addresses Yet!</p>
+            {% endif %}
+            <div class="col-md-5 mx-2 my-2">
+                <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#Update_Seller">
+                    Update Details
+                </button>
+                <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#User_Image">
+                    Update User Image
+                </button>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="User_Image" tabindex="-1" aria-labelledby="User_Image" aria-hidden="true">
+            <div class="modal-dialog " style="min-width: 80%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="User_Image">{{user.username}} Profile Picture Update</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form enctype="multipart/form-data" action="{% url 'update_image' %}" method="POST" class="shadow p-md-3">
+                            {% csrf_token %}
+                            <div class="my-2">
+                                <label for="formFileLg" class="form-label">Select New Profile Picture</label>
+                                <input class="form-control form-control-lg" name="image" id="formFileLg" type="file">
+                                <input type="hidden" name="of" value="user">
+                                <input type="hidden" name="id" value="{{user.id}}">
+                            </div>
+                            <button type="submit" class="btn btn-outline-dark my-2">Update Image</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <!-- Modal -->
+        <div class="modal fade" id="Update_Seller" tabindex="-1" aria-labelledby="Update_Seller" aria-hidden="true">
+            <div class="modal-dialog" style="min-width: 80%;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="Update_Seller">{{user.username}} Update</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form enctype="multipart/form-data" action="{% url 'update_user' %}" method="POST" class="shadow p-md-3">
+                            {% csrf_token %}
+                            <div class="row p-0 m-0">
+                                <div class="col-md-6 p-2 my-2">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" name="username" value="{{user.username}}" class="form-control" id="username" >
+                                </div>
+                                <div class="col-md-6 p-2 my-2">
+                                    <label for="first_name" class="form-label">First Name</label>
+                                    <input type="text" name="first_name" value="{{user.first_name}}" class="form-control" id="first_name" >
+                                </div>
+                                <div class="col-md-6 p-2 my-2">
+                                    <label for="last_name" class="form-label">Last Name</label>
+                                    <input type="text" name="last_name" value="{{user.last_name}}" class="form-control" id="last_name" >
+                                </div>
+                                <div class="col-md-6 p-2 my-2">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="text" name="email" value="{{user.email}}" class="form-control" id="email" >
+                                </div>
+                                <div class="col-md-6 p-2 my-2">
+                                    <label for="address" class="form-label">Address</label>
+                                    <input type="text" name="address" value="{{address.Address}}" class="form-control" id="address" >
+                                </div>
+                                <div class="col-md-4 p-2 my-2">
+                                    <label for="State" class="form-label">State</label>
+                                    <input type="text" name="State" value="{{address.State}}" class="form-control" id="State" >
+                                </div>
+                                <div class="col-md-4 p-2 my-2">
+                                    <label for="Country" class="form-label">Country</label>
+                                    <input type="text" name="Country" value="{{address.Country}}" class="form-control" id="Country" >
+                                </div>
+                                <div class="col-md-4 p-2 my-2">
+                                    <label for="Pincode" class="form-label">Pincode</label>
+                                    <input type="text" name="Pincode" value="{{address.Pincode}}" class="form-control" id="Pincode" >
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-outline-dark mx-auto" >Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
