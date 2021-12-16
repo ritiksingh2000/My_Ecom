@@ -32,12 +32,12 @@ def HomePage(request):
             user_address = User_Address.objects.create(User=user)
             user_address.save()
             return redirect("homepage")
-        
-        customer = Customer.objects.get(User=user)
+    
         
         category = Category.objects.all()
         product = Product.objects.all()
         user = User.objects.get(id=request.user.id)
+        customer = Customer.objects.get(User=user)
         if request.user.is_authenticated: 
             if UserCart.objects.filter(User=user).exists():
                 cart = UserCart.objects.all().filter(User=user)
