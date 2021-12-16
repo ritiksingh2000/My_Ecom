@@ -18,7 +18,6 @@ def HomePage(request):
     pp = "upload/Profile_img/download.png"
     cart = None
     items = 0
-    a = Customer_Review.objects.all().count()
     customer_review = Customer_Review.objects.all()
     if request.user.is_authenticated == True:
         customer_v = Customer.objects.filter(User=request.user.id)
