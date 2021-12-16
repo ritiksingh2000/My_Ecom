@@ -132,8 +132,13 @@ def UserProfile(request):
         customer = Customer.objects.get(User=user)
         is_address = User_Address.objects.filter(User=user)
         address = None
-        seller = Seller.objects.get(User=user)
+        
         category = Category.objects.all()
+
+        if Seller.objects.all().exists():
+            seller = Seller.objects.get(User=user)
+        else:
+            seller=None
 
         is_product = Product.objects.filter(Seller=seller)
         if is_product.exists():
