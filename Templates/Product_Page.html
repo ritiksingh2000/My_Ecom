@@ -6,132 +6,227 @@
 {% block main %}
 {% load admin_list %}
 <div class="row m-0 p-0">
-    <div class="col-md-10 mx-auto">
-        <div class="card shadow my-3">
-            <div class="row g-0">
-                <div class="col-md-4 p-2">
-                    <img src="/upload/{{product.Image}}" class="img-fluid rounded-start">
-                </div>
-                <div class="col-md-8 p-2">
-                    <div class="card-body">
-                        <h5 class="fs-3 mb-3">{{product.Name}}</h5>
-                        {% if product.Discount == 0 %}
-                        <p class="fw-bold fs-4">&#x20B9;{{product.Price}}.00 </p>
-                        {% else %}
-                        <p class="fs-4"><b>&#x20B9;{{product.Discount}}.00</b> <strike class="text-muted small fst-italic">&#x20B9;{{product.Price}}.00</strike></p>
-                        {% endif %}
-                        
-                        <ul class="list-group list-group-flush my-2">
-                            <li class="list-group-item">Seller : </b>{{product.Seller.Seller_Name}}&nbsp;&nbsp;&nbsp;&nbsp;<b>Category : </b>{{product.Category}} </li>
-                            <li class="list-group-item"><b>Availability : </b>
-                                {% if product.in_stock == 1 %}
-                                    <span class="text-success">Available</span>
-                                {% else %}
-                                    <span class="text-danger">Out Of Stock</span>
-                                {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;
-                                <b>Stock : </b>{{product.Stock}}</li>
-                            <li class="list-group-item"><b> 
-                                <a href="{% url 'add_cart' product.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
-							    <a href="#" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Buy Now</a>
-                                <div id="paypal-button-container" style="max-width: 300px;"></div>
-
-    <!-- Include the PayPal JavaScript SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=ASWQ8G35IyVgKT_iOH7NH1epEM6P6i_FTjCitL4adfro_0tlri3YHc06BbbLLx1TNtla36cjmnPqrsBV&currency=INR"></script>
-    
- 
-
-    <script>
-        // Render the PayPal button into #paypal-button-container
-        paypal.Buttons({
-
-            // Set up the transaction
-            createOrder: function(data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: "{{ order }}"
-                        }
-                    }]
-                });
-            },
-
-            // Finalize the transaction
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(orderData) {
-                    // Successful capture! For demo purposes:
-                    console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-                    var transaction = orderData.purchase_units[0].payments.captures[0];
-                    alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
-
-                    // Replace the above to show a success message within this page, e.g.
-                    // const element = document.getElementById('paypal-button-container');
-                    // element.innerHTML = '';
-                    // element.innerHTML = '<h3>Thank you for your payment!</h3>';
-                    // Or go to another URL:  actions.redirect('thank_you.html');
-                });
-            }
-
-
-        }).render('#paypal-button-container');
-    </script>
-                            </li>
-                          </ul>
-                          <div class="px-sm-2  px-md-4">
-                                <p class="h4">Description</p>
-                                <p class="fw-normal">
-                                  {{product.Desc|safe}}
-                                </p>
-                          </div>
-                    </div>
-                </div>
-            </div>
+  <div class="col-md-10 mx-auto">
+    <div class="card shadow my-3">
+      <div class="row g-0">
+        <div class="col-md-4 p-2">
+          <img src="/upload/{{product.Image}}" class="img-fluid rounded-start">
         </div>
-    </div>
-</div>
+        <div class="col-md-8 p-2">
+          <div class="card-body">
+            <h5 class="fs-3 mb-3">{{product.Name}}</h5>
+            {% if product.Discount == 0 %}
+            <p class="fw-bold fs-4">&#x20B9;{{product.Price}}.00 </p>
+            {% else %}
+            <p class="fs-4"><b>&#x20B9;{{product.Discount}}.00</b> <strike class="text-muted small fst-italic">&#x20B9;{{product.Price}}.00</strike></p>
+            {% endif %}
+            
+            <ul class="list-group list-group-flush my-2">
+              <li class="list-group-item">Seller : </b>{{product.Seller.Seller_Name}}&nbsp;&nbsp;&nbsp;&nbsp;<b>Category : </b>{{product.Category}} </li>
+              <li class="list-group-item"><b>Availability : </b>
+                {% if product.in_stock == 1 %}
+                <span class="text-success">Available</span>
+                {% else %}
+                <span class="text-danger">Out Of Stock</span>
+                {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;
+                <b>Stock : </b>{{product.Stock}}</li>
+                <li class="list-group-item"><b> 
+                  <a href="{% url 'add_cart' product.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
+                  <!-- Button trigger modal -->
+                    <button type="button" class="card-link btn mx-auto text-center my-2 btn-outline-dark" data-bs-toggle="modal" data-bs-target="#BuyButton">
+                      Buy Now
+                    </button>
 
-<div class="container my-5">
-	<div class="card shadow text-center">
-		<div class="card-header py-1">
-			<p class="fs-3 my-1 fw-bold">Other Products</p>
-		</div>
-		<div class="card-body">
-			
-			<div class="row p-0 m-0">
-				{% for products in products %}
-				{% if forloop.counter <= 4 %}
-				<div class="col-md-3 mx-auto p-1">
-					
-					<div class="card shadow" style="background-color: rgb(0,0,0,0.02);">
-						<a href="{% url 'product_page' products.id %}" class="text-dark text-decoration-none">
-						<img src="/upload/{{product.Image}}" class="card-img-top img-fluid">
-						<div class="card-body p-1">
-							<h5 class="card-title h4">{{products.Name}}</h5>
-							<p class="card-text">
-								{% if products.Discount == 0 %}
-								<p class="fw-bold fs-4">&#x20B9;{{products.Price}} </p>
-								{% else %}
-								<p class="fs-4"><b>&#x20B9;{{products.Discount}}</b> <strike class="text-muted small fst-italic">&#x20B9;{{products.Price}}</strike></p>
-								{% endif %}
-							</p>
-						</div>
-						</a>
-						<div class="card-body py-0 mt-0 mb-2">
-							<a href="{% url 'add_cart' products.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
-							<a href="#" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Buy Now</a>
+                    <!-- Modal -->
+                    <div class="modal fade" id="BuyButton" tabindex="-1" aria-labelledby="BuyButton" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="BuyButton">Purchase Confirmation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div id="smart-button-container">
+                              <div style="text-align: center"><label class="form-label" for="description">Product Name &nbsp;</label><input type="text"  name="descriptionInput" id="description" maxlength="127" value="{{product.Name}}"></div>
+                                <p id="descriptionError" style="visibility: hidden; color:red; text-align: center;">Please enter a description</p>
+                              <div style="text-align: center"><label class="form-label" for="amount">Product Price &nbsp;</label><input  name="amountInput" type="number" id="amount" value="{{order}}" ><span> USD</span></div>
+                                <p id="priceLabelError" style="visibility: hidden; color:red; text-align: center;">Please enter a price</p>
+                              <div id="invoiceidDiv" style="text-align: center; display: none;"><label class="form-label" for="invoiceid"> </label><input  name="invoiceid" maxlength="127" type="text" id="invoiceid" value="ODR-{{product.Name}}" ></div>
+                                <p id="invoiceidError" style="visibility: hidden; color:red; text-align: center;">Please enter an Invoice ID</p>
+                              <div style="text-align: center; margin-top: 0.625rem;" id="paypal-button-container"></div>
+                            </div>
                             
+                            
+                          </div>
                         </div>
-
-						<br>
-					</div>
-				</div>
-				{% endif %}
-				
-				{% endfor %}
-			</div>
-			
-		</div>
-	</div>
-</div>
-
-
-{% endblock %}
+                      </div>
+                    </div>
+                </li>
+              </ul>
+              <div class="px-sm-2  px-md-4">
+                <p class="h4">Description</p>
+                <p class="fw-normal">
+                  {{product.Desc|safe}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container my-5">
+    <div class="card shadow text-center">
+      <div class="card-header py-1">
+        <p class="fs-3 my-1 fw-bold">Other Products</p>
+      </div>
+      <div class="card-body">
+        
+        <div class="row p-0 m-0">
+          {% for products in products %}
+          {% if forloop.counter <= 3 %}
+          <div class="col-md-3 mx-auto p-1">
+            
+            <div class="card shadow" style="background-color: rgb(0,0,0,0.02);">
+              <a href="{% url 'product_page' products.id %}" class="text-dark text-decoration-none">
+                <img src="/upload/{{products.Image}}" class="card-img-top img-fluid">
+                <div class="card-body p-1">
+                  <h5 class="card-title h4">{{products.Name}}</h5>
+                  <p class="card-text">
+                    {% if products.Discount == 0 %}
+                    <p class="fw-bold fs-4">&#x20B9;{{products.Price}} </p>
+                    {% else %}
+                    <p class="fs-4"><b>&#x20B9;{{products.Discount}}</b> <strike class="text-muted small fst-italic">&#x20B9;{{products.Price}}</strike></p>
+                    {% endif %}
+                  </p>
+                </div>
+              </a>
+              <div class="card-body py-0 mt-0 mb-2">
+                <a href="{% url 'add_cart' products.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
+                
+                
+              </div>
+              
+              <br>
+            </div>
+          </div>
+          {% endif %}
+          
+          {% endfor %}
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://www.paypal.com/sdk/js?client-id=AYXTZlxnd2AiGGBQ_ST04Ejy9J_Nyab1NCZAWApDJpJTtVUYjXWg8iNr2MsGE2iN8K3BJo_yzKUvPE0a&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
+  <script>
+    function initPayPalButton() {
+      var description = document.querySelector('#smart-button-container #description');
+      var amount = document.querySelector('#smart-button-container #amount');
+      var descriptionError = document.querySelector('#smart-button-container #descriptionError');
+      var priceError = document.querySelector('#smart-button-container #priceLabelError');
+      var invoiceid = document.querySelector('#smart-button-container #invoiceid');
+      var invoiceidError = document.querySelector('#smart-button-container #invoiceidError');
+      var invoiceidDiv = document.querySelector('#smart-button-container #invoiceidDiv');
+  
+      var elArr = [description, amount];
+  
+      if (invoiceidDiv.firstChild.innerHTML.length > 1) {
+        invoiceidDiv.style.display = "block";
+      }
+  
+      var purchase_units = [];
+      purchase_units[0] = {};
+      purchase_units[0].amount = {};
+  
+      function validate(event) {
+        return event.value.length > 0;
+      }
+  
+      paypal.Buttons({
+        style: {
+          color: 'gold',
+          shape: 'pill',
+          label: 'buynow',
+          layout: 'vertical',
+          
+        },
+  
+        onInit: function (data, actions) {
+          actions.enable();
+  
+          if(invoiceidDiv.style.display === "block") {
+            elArr.push(invoiceid);
+          }
+  
+          elArr.forEach(function (item) {
+            item.addEventListener('keyup', function (event) {
+              var result = elArr.every(validate);
+              if (result) {
+                actions.enable();
+              } else {
+                actions.enable();
+              }
+            });
+          });
+        },
+  
+        onClick: function () {
+          if (description.value.length < 1) {
+            descriptionError.style.visibility = "visible";
+          } else {
+            descriptionError.style.visibility = "hidden";
+          }
+  
+          if (amount.value.length < 1) {
+            priceError.style.visibility = "visible";
+          } else {
+            priceError.style.visibility = "hidden";
+          }
+  
+          if (invoiceid.value.length < 1 && invoiceidDiv.style.display === "block") {
+            invoiceidError.style.visibility = "visible";
+          } else {
+            invoiceidError.style.visibility = "hidden";
+          }
+  
+          purchase_units[0].description = description.value;
+          purchase_units[0].amount.value = amount.value;
+  
+          if(invoiceid.value !== '') {
+            purchase_units[0].invoice_id = invoiceid.value;
+          }
+        },
+  
+        createOrder: function (data, actions) {
+          return actions.order.create({
+            purchase_units: purchase_units,
+          });
+        },
+  
+        onApprove: function (data, actions) {
+          return actions.order.capture().then(function (orderData) {
+  
+            // Full available details
+            console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+  
+            // Show a success message within this page, e.g.
+            const element = document.getElementById('paypal-button-container');
+            element.innerHTML = '';
+            element.innerHTML = '<h3>Thank you for your payment!</h3>';
+  
+            // Or go to another URL:  actions.redirect('thank_you.html');
+            
+          });
+        },
+  
+        onError: function (err) {
+          console.log(err);
+        }
+      }).render('#paypal-button-container');
+    }
+    initPayPalButton();
+    </script>
+  {% endblock %}

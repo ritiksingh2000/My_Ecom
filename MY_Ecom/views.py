@@ -8,7 +8,6 @@ from django.contrib.auth import logout, login, authenticate
 from django.contrib.messages import info
 from django.contrib.auth.hashers import make_password
 
-
 # Create your views here.
 """
 HOMEPAGE
@@ -553,9 +552,9 @@ def ProductPage(request, id):
     
     product = Product.objects.get(id=id)
     if int(product.Discount) == 0:
-        order = product.Price
+        order = int(product.Price)
     else:
-        order = product.Discount
+        order = int(product.Discount)
     products = Product.objects.all().exclude(id=int(product.id))
 
     return render(request, "Product_Page.html", {"category":category, "order":order, "pp":pp, "cart":cart, "product":product, "products":products})

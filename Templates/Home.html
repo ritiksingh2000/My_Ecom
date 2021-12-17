@@ -82,7 +82,6 @@
 						</a>
 						<div class="card-body py-0 mt-0 mb-2">
 							<a href="{% url 'add_cart' product.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
-							<a href="#" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Buy Now</a>
 						</div>
 						<br>
 					</div>
@@ -91,7 +90,7 @@
 				
 				{% endfor %}
 			</div>
-			<a href="#" class="btn my-4 btn-outline-dark">All Products</a>
+			<a href="{% url 'all_products' %}" class="btn my-4 btn-outline-dark">All Products</a>
 		</div>
 	</div>
 </div>
