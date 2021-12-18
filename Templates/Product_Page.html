@@ -16,9 +16,9 @@
           <div class="card-body">
             <h5 class="fs-3 mb-3">{{product.Name}}</h5>
             {% if product.Discount == 0 %}
-            <p class="fw-bold fs-4">&#x20B9;{{product.Price}}.00 </p>
+            <p class="fw-bold fs-4">${{product.Price}}.00 </p>
             {% else %}
-            <p class="fs-4"><b>&#x20B9;{{product.Discount}}.00</b> <strike class="text-muted small fst-italic">&#x20B9;{{product.Price}}.00</strike></p>
+            <p class="fs-4"><b>${{product.Discount}}.00</b> <strike class="text-muted small fst-italic">${{product.Price}}.00</strike></p>
             {% endif %}
             
             <ul class="list-group list-group-flush my-2">
@@ -31,36 +31,9 @@
                 {% endif %} &nbsp;&nbsp;&nbsp;&nbsp;
                 <b>Stock : </b>{{product.Stock}}</li>
                 <li class="list-group-item"><b> 
-                  <a href="{% url 'add_cart' product.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
-                  <!-- Button trigger modal -->
-                    <button type="button" class="card-link btn mx-auto text-center my-2 btn-outline-dark" data-bs-toggle="modal" data-bs-target="#BuyButton">
-                      Buy Now
-                    </button>
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="BuyButton" tabindex="-1" aria-labelledby="BuyButton" aria-hidden="true">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="BuyButton">Purchase Confirmation</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            <div id="smart-button-container">
-                              <div style="text-align: center"><label class="form-label" for="description">Product Name &nbsp;</label><input type="text"  name="descriptionInput" id="description" maxlength="127" value="{{product.Name}}"></div>
-                                <p id="descriptionError" style="visibility: hidden; color:red; text-align: center;">Please enter a description</p>
-                              <div style="text-align: center"><label class="form-label" for="amount">Product Price &nbsp;</label><input  name="amountInput" type="number" id="amount" value="{{order}}" ><span> USD</span></div>
-                                <p id="priceLabelError" style="visibility: hidden; color:red; text-align: center;">Please enter a price</p>
-                              <div id="invoiceidDiv" style="text-align: center; display: none;"><label class="form-label" for="invoiceid"> </label><input  name="invoiceid" maxlength="127" type="text" id="invoiceid" value="ODR-{{product.Name}}" ></div>
-                                <p id="invoiceidError" style="visibility: hidden; color:red; text-align: center;">Please enter an Invoice ID</p>
-                              <div style="text-align: center; margin-top: 0.625rem;" id="paypal-button-container"></div>
-                            </div>
-                            
-                            
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  
+                    <a href="{% url 'add_cart' product.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
+                   <a href="{% url 'buy_product' product.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Buy Now</a>
                 </li>
               </ul>
               <div class="px-sm-2  px-md-4">
@@ -95,16 +68,16 @@
                   <h5 class="card-title h4">{{products.Name}}</h5>
                   <p class="card-text">
                     {% if products.Discount == 0 %}
-                    <p class="fw-bold fs-4">&#x20B9;{{products.Price}} </p>
+                    <p class="fw-bold fs-4">${{products.Price}} </p>
                     {% else %}
-                    <p class="fs-4"><b>&#x20B9;{{products.Discount}}</b> <strike class="text-muted small fst-italic">&#x20B9;{{products.Price}}</strike></p>
+                    <p class="fs-4"><b>${{products.Discount}}</b> <strike class="text-muted small fst-italic">${{products.Price}}</strike></p>
                     {% endif %}
                   </p>
                 </div>
               </a>
               <div class="card-body py-0 mt-0 mb-2">
                 <a href="{% url 'add_cart' products.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
-                
+                <a href="{% url 'buy_product' products.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Buy Now</a>
                 
               </div>
               

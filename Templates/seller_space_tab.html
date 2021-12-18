@@ -175,7 +175,7 @@
                                 {% if product.Discount == 0 %}
                                 <p>Rs.{{product.Price}} </p>
                                 {% else %}
-                                <p>&#x20B9;{{product.Discount}} <strike class="text-muted small">&#x20B9;{{product.Price}}</strike></p>
+                                <p>${{product.Discount}} <strike class="text-muted small">${{product.Price}}</strike></p>
                                 {% endif %}
                                 
                                 <ul class="list-group small list-group-flush">

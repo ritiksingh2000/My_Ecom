@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.messages import info
 from django.contrib.auth.hashers import make_password
-
+import datetime
+    
 # Create your views here.
 """
 HOMEPAGE
@@ -590,3 +591,114 @@ def ProductSearch(request):
         return redirect("homepage")
 
     
+def BuyProduct(request, id):
+    cart = None
+    if request.user.is_authenticated:
+        user = User.objects.get(id=request.user.id)
+        customer = Customer.objects.get(User=user)
+        pp = f"{customer.User_Img}"
+        address = User_Address.objects.get(User=request.user)
+    else:
+        pp = "upload/Profile_img/download.png"
+    category = Category.objects.all()
+    if request.user.is_authenticated: 
+        if UserCart.objects.filter(User=user).exists():
+            cart = UserCart.objects.all().filter(User=user)
+    else:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+            cart = GuestCart.objects.all().filter(IP=ip)
+
+    product = Product.objects.get(id=id)
+    order_id = f"ODR-{datetime.datetime.now()}"
+    if product.Discount ==0 :
+        odr_amount = product.Price
+    else:
+        odr_amount = product.Discount
+    
+    Discount = round(((int(product.Price)-int(product.Discount))/int(product.Price))*100)
+    
+    return render(request, "BuyProduct.html", {"category":category, "pp":pp, "cart":cart, "product":product, "odr_amount":odr_amount, "order_id":order_id, "Discount":Discount, "address":address, "customer":customer})
+
+def MakePayment(request):
+    if request.method == "POST":
+        cart = None
+        if request.user.is_authenticated:
+            user = User.objects.get(id=request.user.id)
+            customer = Customer.objects.get(User=user)
+            pp = f"{customer.User_Img}"
+        else:
+            pp = "upload/Profile_img/download.png"
+        category = Category.objects.all()
+        if request.user.is_authenticated: 
+            if UserCart.objects.filter(User=user).exists():
+                cart = UserCart.objects.all().filter(User=user)
+        else:
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+                cart = GuestCart.objects.all().filter(IP=ip)
+
+    
+        if request.POST['type'] == "product_payment":
+            p_id = int(request.POST['p_id'])
+            product = Product.objects.get(id=p_id)
+            odr_amount = request.POST['odr_amount']
+            order_id = request.POST['order_id']
+            seller = Seller.objects.get(id=int(product.Seller.id))
+            address = f"{request.POST['address']} , {request.POST['state']}, {request.POST['country']}, {request.POST['pincode']}"
+            status = OrderStatus.objects.get(id=1)
+            phoneno = str(request.POST['phone'])
+            email = str(request.POST['email'])
+            first_name = str(request.POST['first_name'])
+            last_name = str(request.POST['last_name'])
+                        
+            create_order = Order.objects.create(OrderNumber=order_id, First_Name=first_name , Last_Name=last_name, PhoneNo=phoneno, From=seller, To=email , Product=product, Address=address, Status=status)
+            create_order.save()
+            
+            product.Stock = int(product.Stock)-1
+            product.save()
+            
+            return render(request, "PaymentPage.html",{"category":category, "pp":pp, "cart":cart, "product":product, "odr_amount":odr_amount, "order_id":order_id})
+        
+        elif request.POST['type'] == "cart_payment":
+            return redirect("homepage")
+        else:
+            info(request, "Server Error Please Try Again.")
+            return redirect("homepage")
+            
+    else:
+        info(request, "Some Error Occured. Please Try Again")
+        return redirect("homepage")
+    
+def OrderSuccessfull(request,order_id):
+    cart = None
+    if request.user.is_authenticated:
+        user = User.objects.get(id=request.user.id)
+        customer = Customer.objects.get(User=user)
+        pp = f"{customer.User_Img}"
+    else:
+        pp = "upload/Profile_img/download.png"
+    category = Category.objects.all()
+    if request.user.is_authenticated: 
+        if UserCart.objects.filter(User=user).exists():
+            cart = UserCart.objects.all().filter(User=user)
+    else:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+            cart = GuestCart.objects.all().filter(IP=ip)
+
+    order=Order.objects.get(OrderNumber=order_id)
+    order.Status = OrderStatus.objects.get(id=2)
+    order.PaymentStatus = 1
+    order.save()
+
+    return render(request, "OrderSuccessfull.html", {"category":category, "pp":pp, "cart":cart})

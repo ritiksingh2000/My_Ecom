@@ -102,15 +102,15 @@
                         <p class="h5">{{cart.Product.Name}}</p>
                         <hr class="my-1">
                         {% if cart.Discount == 0 or cart.Product.Discount == "0" %}
-                        <p class="fw-bold fs-4">&#x20B9;{{cart.Product.Price }}.00 </p>
+                        <p class="fw-bold fs-4">${{cart.Product.Price }}.00 </p>
                         {% else %}
-                        <p class="fs-4"><b>&#x20B9;{{ cart.Product.Discount }}.00</b> <strike class="text-muted small fst-italic">&#x20B9;{{cart.Product.Price}}.00</strike></p>
+                        <p class="fs-4"><b>${{ cart.Product.Discount }}.00</b> <strike class="text-muted small fst-italic">${{cart.Product.Price}}.00</strike></p>
                         {% endif %}
                         
                         {% if cart.Discount == 0 or cart.Product.Discount == "0" %}
-                        <p class="fw-bold fs-6"><b>Total :</b> &#x20B9;{{cart.Price }}.00 </p>
+                        <p class="fw-bold fs-6"><b>Total :</b> ${{cart.Price }}.00 </p>
                         {% else %}
-                        <p class="fs-6"><b>Total :</b><b>&#x20B9;{{ cart.Discount }}.00</b> <strike class="text-muted small fst-italic">&#x20B9;{{cart.Price}}.00</strike></p>
+                        <p class="fs-6"><b>Total :</b><b>${{ cart.Discount }}.00</b> <strike class="text-muted small fst-italic">${{cart.Price}}.00</strike></p>
                         {% endif %}
                         
                         <div class="input-group input-group-sm my-0 small" style="max-width: 185px;">

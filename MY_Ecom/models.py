@@ -143,15 +143,24 @@ class OrderStatus(models.Model):
 
 class Order(models.Model):
     OrderNumber = models.CharField(max_length=100, null=True)
+    First_Name = models.CharField(max_length=100, null=True, blank=True)
+    Last_Name = models.CharField(max_length=100, null=True, blank=True)
+    PhoneNo = models.CharField(max_length=100, null=True, blank=True)
     From = models.ForeignKey(Seller, on_delete=models.CASCADE)
-    To = models.ForeignKey(User, on_delete=models.CASCADE)
+    To = models.CharField(max_length=100, null=True, blank=True)
     Product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    Address = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    Address = models.CharField(max_length=200, null=True, blank=True)
     OrderDate = models.DateTimeField(auto_now_add=True)
     Status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
+    PaymentStatus = models.BooleanField(default=0)
+    
 
     def __str__(self) -> str:
-        return f"{self.To} | {self.From} | {self.Status}"
+        if self.PaymentStatus == 1:
+            PaymentStatus = "🟢"
+        else:
+            PaymentStatus = "🔴"
+        return f"{self.To} | {self.From} | {self.Status} | {PaymentStatus}"
 
 class UserCart(models.Model):
     User = models.ForeignKey(User, on_delete=models.CASCADE)

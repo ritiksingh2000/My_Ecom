@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% block title %}
+<title> Checkout | {{product.Name}}</title>
+{% endblock %}
+
+{% block main %}
+
+<div class="container">
+    <div class="bg-white my-4 row m-0 p-0">
+        {% if user.is_authenticated %}
+        <div class="col-md-7 p-3 mx-auto">
+            <div class="card my-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="/upload/{{product.Image}}" class="img-fluid rounded-start">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title fs-3">{{product.Name}}</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><b>Seller : </b><img src="/upload/{{product.Seller.Business_Logo}}" width="36px">{{product.Seller.Seller_Name}}</li>
+                                <li class="list-group-item"><b>Seller Location : </b>{{product.Seller.State}}, {{product.Seller.Country}}</li>
+                                
+                                <li class="list-group-item"><b>Category : </b>{{product.Category.Name}}</li>
+                                <li class="list-group-item">{% if product.Discount == 0 %}
+                                    <p class="fw-bold fs-4">${{product.Price}} </p>
+                                    {% else %}
+                                    <p class="fs-4"><b>${{product.Discount}}</b> <strike class="text-muted small fst-italic">${{product.Price}}</strike></p>
+                                    {% endif %}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form action="{% url 'payment_page' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="firstName" class="form-label">First name</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" value="{{user.first_name}}" required>
+                            <div class="invalid-feedback">
+                                Valid first name is required.
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-6">
+                            <label for="lastName" class="form-label">Last name</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" value="{{user.last_name}}" required>
+                            <div class="invalid-feedback">
+                                Valid last name is required.
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid email address for shipping updates.
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="phoneno" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phoneno" name="phone" value="{{customer.Phone_No}}" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid phone no for shipping updates.
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="address" name="address" value="{{address.Address}}" required>
+                            <div class="invalid-feedback">
+                                Please enter your shipping address.
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-5">
+                            <label for="zip" class="form-label">State</label>
+                            <input type="text" class="form-control" id="zip" name="state" value="{{address.State}}" required>
+                        </div><div class="col-md-4">
+                            <label for="zip" class="form-label">Country</label>
+                            <input type="text" class="form-control" id="zip" name="country" value="India" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="zip" class="form-label">Zip</label>
+                            <input type="text" class="form-control" id="zip" name="pincode" value="{{address.Pincode}}" required>
+                            <div class="invalid-feedback">
+                                Zip code required.
+                            </div>
+                            <input type="hidden" name="order_id" value="{{order_id}}">
+                            <input type="hidden" name="odr_amount" value="{{odr_amount}}">
+                            <input type="hidden" name="p_id" value="{{product.id}}">
+                            <input type="hidden" name="type" value="product_payment">
+                        </div>
+                    </div>
+                    <div class="d-grid my-3 gap-2">
+                    <button type="submit" class="btn btn-outline-dark">Pay Now</button>
+                    </div>
+                </form>
+                
+            </div>
+            <div class="col-md-5 p-3 mx-auto">
+                
+                <ul class="list-group my-3 mb-3">
+                    <p class="h3">Payment Details</p>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Product Price</h6>
+                        </div>
+                        <span class="text-muted">{{product.Price}}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Product Discount</h6>
+                        </div>
+                        <span class="text-muted">{{Discount}}%</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Product Shipping</h6>
+                        </div>
+                        <span class="text-muted">$0</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">TAX</h6>
+                        </div>
+                        <span class="text-muted">$0</span>
+                    </li>
+                    <li class="list-group-item fs-3 d-flex justify-content-between">
+                        <span>Total (USD)</span>
+                        <strong>${{odr_amount}}</strong>
+                    </li>
+                </ul>
+                
+            </div>
+                
+                
+            </div>
+                
+            </div>
+        {% else %}
+        
+        <div class="col-md-7 p-3 mx-auto">
+            <div class="card my-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="/upload/{{product.Image}}" class="img-fluid rounded-start">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title fs-3">{{product.Name}}</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><b>Seller : </b><img src="/upload/{{product.Seller.Business_Logo}}" width="36px">{{product.Seller.Seller_Name}}</li>
+                                <li class="list-group-item"><b>Seller Location : </b>{{product.Seller.State}}, {{product.Seller.Country}}</li>
+                                
+                                <li class="list-group-item"><b>Category : </b>{{product.Category.Name}}</li>
+                                <li class="list-group-item">{% if product.Discount == 0 %}
+                                    <p class="fw-bold fs-4">${{product.Price}} </p>
+                                    {% else %}
+                                    <p class="fs-4"><b>${{product.Discount}}</b> <strike class="text-muted small fst-italic">${{product.Price}}</strike></p>
+                                    {% endif %}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form action="{% url 'payment_page' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="firstName" class="form-label">First name</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" value="{{user.first_name}}" required>
+                            <div class="invalid-feedback">
+                                Valid first name is required.
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-6">
+                            <label for="lastName" class="form-label">Last name</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" value="{{user.last_name}}" required>
+                            <div class="invalid-feedback">
+                                Valid last name is required.
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid email address for shipping updates.
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="phoneno" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phoneno" name="phone" value="+91 {{customer.Phone_No}}" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid phone no for shipping updates.
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="address" name="address" value="{{address.Address}}" required>
+                            <div class="invalid-feedback">
+                                Please enter your shipping address.
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-5">
+                            <label for="zip" class="form-label">State</label>
+                            <input type="text" class="form-control" id="zip" name="state" value="{{address.State}}" required>
+                        </div><div class="col-md-4">
+                            <label for="zip" class="form-label">Country</label>
+                            <input type="text" class="form-control" id="zip" name="country" value="India" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="zip" class="form-label">Zip</label>
+                            <input type="text" class="form-control" id="zip" name="pincode" value="{{address.Pincode}}" required>
+                            <div class="invalid-feedback">
+                                Zip code required.
+                            </div>
+                            <input type="hidden" name="order_id" value="{{order_id}}">
+                            <input type="hidden" name="odr_amount" value="{{odr_amount}}">
+                            <input type="hidden" name="p_id" value="{{product.id}}">
+                            <input type="hidden" name="type" value="product_payment">
+                        </div>
+                    </div>
+                    <div class="d-grid my-3 gap-2">
+                    <button type="submit" class="btn btn-outline-dark">Pay Now</button>
+                    </div>
+                </form>
+                
+            </div>
+            <div class="col-md-5 p-3 mx-auto">
+                
+                <ul class="list-group my-3 mb-3">
+                    <p class="h3">Payment Details</p>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Product Price</h6>
+                        </div>
+                        <span class="text-muted">{{product.Price}}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Product Discount</h6>
+                        </div>
+                        <span class="text-muted">{{Discount}}%</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Product Shipping</h6>
+                        </div>
+                        <span class="text-muted">$0</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">TAX</h6>
+                        </div>
+                        <span class="text-muted">$0</span>
+                    </li>
+                    <li class="list-group-item fs-3 d-flex justify-content-between">
+                        <span>Total (USD)</span>
+                        <strong>${{odr_amount}}</strong>
+                    </li>
+                </ul>
+                
+            </div>
+                
+                
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% endblock %}

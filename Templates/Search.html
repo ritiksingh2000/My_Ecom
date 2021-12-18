@@ -26,15 +26,17 @@
                                     <h5 class="card-title h4">{{products.Name}}</h5>
                                     <p class="card-text">
                                         {% if products.Discount == 0 %}
-                                        <p class="fw-bold fs-4">&#x20B9;{{products.Price}} </p>
+                                        <p class="fw-bold fs-4">${{products.Price}} </p>
                                         {% else %}
-                                        <p class="fs-4"><b>&#x20B9;{{products.Discount}}</b> <strike class="text-muted small fst-italic">&#x20B9;{{products.Price}}</strike></p>
+                                        <p class="fs-4"><b>${{products.Discount}}</b> <strike class="text-muted small fst-italic">${{products.Price}}</strike></p>
                                         {% endif %}
                                     </p>
                                 </div>
                                 </a>
                                 <div class="card-body py-0 mt-0 mb-2">
                                     <a href="{% url 'add_cart' products.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Add To Cart</a>
+                                    <a href="{% url 'buy_product' products.id %}" class="card-link btn mx-auto text-center my-2 btn-outline-dark">Buy Now</a>
+
                                 </div>
                                 <br>
                             </div>
