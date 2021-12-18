@@ -22,7 +22,7 @@
             {% endif %}
             
             <ul class="list-group list-group-flush my-2">
-              <li class="list-group-item">Seller : </b>{{product.Seller.Seller_Name}}&nbsp;&nbsp;&nbsp;&nbsp;<b>Category : </b>{{product.Category}} </li>
+              <li class="list-group-item">Seller : </b>{{product.Seller.Seller_Name}}&nbsp;&nbsp;<b>Category : </b>{{product.Category}} </li>
               <li class="list-group-item"><b>Availability : </b>
                 {% if product.in_stock == 1 %}
                 <span class="text-success">Available</span>
