@@ -4,14 +4,16 @@
 {% endblock %}
 
 {% block main %}
+<meta http-equiv="refresh" content="3; url={% url 'homepage' %}">
 
-<div class="containner text-center">
-    <div class="card my-4">
+<div class="mx-md-5 mx-md-5 my-4 text-center">
+    <div class="card">
         <div class="fs-3 card-header">✅ Order Placed Successfully</div>
     </div>
-    <div class="card-body">
+    <div class="card-body bg-white">
         <p class="h3">Thanks For Your Purchase.</p>
         <small class="text-muted">You Will recieve an email regarding your order within 24hrs.</small>
+
     </div>
 </div>
 

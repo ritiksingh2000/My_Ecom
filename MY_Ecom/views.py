@@ -8,6 +8,8 @@ from django.contrib.auth import logout, login, authenticate
 from django.contrib.messages import info
 from django.contrib.auth.hashers import make_password
 import datetime
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
     
 # Create your views here.
 """
@@ -658,8 +660,7 @@ def MakePayment(request):
             first_name = str(request.POST['first_name'])
             last_name = str(request.POST['last_name'])
                         
-            create_order = Order.objects.create(OrderNumber=order_id, First_Name=first_name , Last_Name=last_name, PhoneNo=phoneno, From=seller, To=email , Product=product, Address=address, Status=status)
-            create_order.save()
+            create_order = Order.objects.get_or_create(OrderNumber=order_id, First_Name=first_name , Last_Name=last_name, PhoneNo=phoneno, From=seller, To=email , Product=product, Address=address, Status=status)
             
             product.Stock = int(product.Stock)-1
             product.save()
@@ -700,5 +701,19 @@ def OrderSuccessfull(request,order_id):
     order.Status = OrderStatus.objects.get(id=2)
     order.PaymentStatus = 1
     order.save()
+    
+    Discount = round(((int(order.Product.Price)-int(order.Product.Discount))/int(order.Product.Price))*100)
+    
+    email_from = "business.ritiksingh@gmail.com"
+    email_to = str(order.To) 
+    subject = "Order Confirmation From My Ecom"
+    message = render_to_string("email.html", {"order":order, "Discount":Discount})
+    
+    send_mail(
+        subject, 
+        message,
+        email_from,
+        [email_to],
+    )
 
     return render(request, "OrderSuccessfull.html", {"category":category, "pp":pp, "cart":cart})
