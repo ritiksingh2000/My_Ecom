@@ -150,6 +150,7 @@ class Order(models.Model):
     To = models.CharField(max_length=100, null=True, blank=True)
     Product = models.ForeignKey(Product, on_delete=models.CASCADE)
     Address = models.CharField(max_length=200, null=True, blank=True)
+    Quantity =models.CharField(max_length=200, null=True, blank=True, default=1)
     OrderDate = models.DateTimeField(auto_now_add=True)
     Status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
     PaymentStatus = models.BooleanField(default=0)

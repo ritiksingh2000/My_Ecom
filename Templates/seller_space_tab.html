@@ -26,31 +26,31 @@
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     Update Seller Details
                 </button>
-                    <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#Seller_logo">
-                        Update Logo
-                    </button>
-                    <div class="modal fade" id="Seller_logo" tabindex="-1" aria-labelledby="Seller_logo" aria-hidden="true">
-                        <div class="modal-dialog " style="min-width: 80%;">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="Seller_logo">{{seller.Seller_Name}} Logo Update</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form enctype="multipart/form-data" action="{% url 'update_image' %}" method="POST" class="shadow p-md-3">
-                                        {% csrf_token %}
-                                        <div class="my-2">
-                                            <label for="formFileLg" class="form-label">Select New Seller Logo</label>
-                                            <input class="form-control form-control-lg" name="image" id="formFileLg" type="file">
-                                            <input type="hidden" name="of" value="seller">
-                                            <input type="hidden" name="id" value="{{seller.id}}">
-                                          </div>
-                                          <button type="submit" class="btn btn-outline-dark my-2">Update Logo</button>
-                                    </form>
-                                </div>
+                <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#Seller_logo">
+                    Update Logo
+                </button>
+                <div class="modal fade" id="Seller_logo" tabindex="-1" aria-labelledby="Seller_logo" aria-hidden="true">
+                    <div class="modal-dialog " style="min-width: 80%;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="Seller_logo">{{seller.Seller_Name}} Logo Update</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form enctype="multipart/form-data" action="{% url 'update_image' %}" method="POST" class="shadow p-md-3">
+                                    {% csrf_token %}
+                                    <div class="my-2">
+                                        <label for="formFileLg" class="form-label">Select New Seller Logo</label>
+                                        <input class="form-control form-control-lg" name="image" id="formFileLg" type="file">
+                                        <input type="hidden" name="of" value="seller">
+                                        <input type="hidden" name="id" value="{{seller.id}}">
+                                    </div>
+                                    <button type="submit" class="btn btn-outline-dark my-2">Update Logo</button>
+                                </form>
                             </div>
                         </div>
                     </div>
+                </div>
                 
                 <!-- Modal -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -130,14 +130,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="tg-0lax">Product Name</td>
-                                    <td class="tg-0lax">2</td>
-                                    <td class="tg-0lax">Rs.300.00</td>
-                                    <td class="tg-0lax">Not Confirmed</td>
-                                    <td class="tg-0lax">skvbjsv New Delhi india</td>
-                                    <td class="tg-0lax"><small><button class="btn btn-dark">Update</button></small></td>
-                                </tr>
+                                {% for order in order %}
+        {% if order.From.Seller_Email == user.email %}
+        <tr>
+            <td class="tg-0lax"><img src="/upload/{{order.Product.Image}}" width="50px" class="img-fluid">{{order.Product.Name}}</td>
+            <td class="tg-0lax">{{order.Quantity}}</td>
+            <td class="tg-0lax">{% if order.Product.Discount == 0 %}
+                <p>${{order.Product.Price}}.00 </p>
+                {% else %}
+                <p>${{order.Product.Discount}}.00</p>
+                {% endif %}</td>
+            <td class="tg-0lax">{{order.Status}}</td>
+            <td class="tg-0lax">{{order.Address}}</td>
+            <td class="tg-0lax"><small><button class="btn btn-dark">Update</button></small></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+                                
                             </tbody>
                         </table>
                     </div>
@@ -165,62 +174,62 @@
                         
                         <div class="row g-0 shadow bg-white p-3">
                             
-                          <div class="col-md-4">
-                            <img src="/upload/{{product.Image}}" class="img-fluid rounded-start">
-                          </div>
-                          <div class="col-md-8">
-                            <div class="p-1">
-                                <h5 class="h4">{{product.Name}} </h5>
-                                <p class="card-text small p-2">{{product.Desc|slice:":100"}}...</p>
-                                {% if product.Discount == 0 %}
-                                <p>Rs.{{product.Price}} </p>
-                                {% else %}
-                                <p>${{product.Discount}} <strike class="text-muted small">${{product.Price}}</strike></p>
-                                {% endif %}
-                                
-                                <ul class="list-group small list-group-flush">
-                                    <li class="list-group-item"><b>Category : </b>{{product.Category}}</li>
-                                    <li class="list-group-item"><b>Quantity : </b>{{product.Stock}}</li>
-                                    <li class="list-group-item"><b>Status : </b>
-                                        {% if product.in_stock == 1 %}
+                            <div class="col-md-4">
+                                <img src="/upload/{{product.Image}}" class="img-fluid rounded-start">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="p-1">
+                                    <h5 class="h4">{{product.Name}} </h5>
+                                    <p class="card-text small p-2">{{product.Desc|slice:":100"}}...</p>
+                                    {% if product.Discount == 0 %}
+                                    <p>Rs.{{product.Price}} </p>
+                                    {% else %}
+                                    <p>${{product.Discount}} <strike class="text-muted small">${{product.Price}}</strike></p>
+                                    {% endif %}
+                                    
+                                    <ul class="list-group small list-group-flush">
+                                        <li class="list-group-item"><b>Category : </b>{{product.Category}}</li>
+                                        <li class="list-group-item"><b>Quantity : </b>{{product.Stock}}</li>
+                                        <li class="list-group-item"><b>Status : </b>
+                                            {% if product.in_stock == 1 %}
                                             Active
-                                        {% else %}
+                                            {% else %}
                                             Disabled
-                                        {% endif %}
-                                    </li>
-                                  </ul>
-                                  <small><span><button type="button" class="btn btn-success m-3" data-bs-toggle="modal" data-bs-target="#Update_Product{{ forloop.counter }}">
-                                    Update Details
-                                </button></span><span> <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#Product_Image_Update{{ forloop.counter }}">
-                                    Update Image
-                                </button></span>
-                                <div class="modal fade" id="Product_Image_Update{{ forloop.counter }}" tabindex="-1" aria-labelledby="Product_Image_Update" aria-hidden="true">
-                                    <div class="modal-dialog " style="min-width: 80%;">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="Product_Image_Update">{{product.Name}} Image Update</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form enctype="multipart/form-data" action="{% url 'update_image' %}" method="POST" class="shadow p-md-3">
-                                                    {% csrf_token %}
-                                                    <div class="my-2">
-                                                        <label for="formFileLg" class="form-label">Select New Product image</label>
-                                                        <input class="form-control form-control-lg" name="image" id="formFileLg" type="file">
-                                                        <input type="hidden" name="of" value="product">
-                                                        <input type="hidden" name="id" value="{{product.id}}">
-                                                      </div>
-                                                      <button type="submit" class="btn btn-outline-dark my-2">Update Image</button>
-                                                </form>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                    <small><span><button type="button" class="btn btn-success m-3" data-bs-toggle="modal" data-bs-target="#Update_Product{{ forloop.counter }}">
+                                        Update Details
+                                    </button></span><span> <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#Product_Image_Update{{ forloop.counter }}">
+                                        Update Image
+                                    </button></span>
+                                    <div class="modal fade" id="Product_Image_Update{{ forloop.counter }}" tabindex="-1" aria-labelledby="Product_Image_Update" aria-hidden="true">
+                                        <div class="modal-dialog " style="min-width: 80%;">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="Product_Image_Update">{{product.Name}} Image Update</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form enctype="multipart/form-data" action="{% url 'update_image' %}" method="POST" class="shadow p-md-3">
+                                                        {% csrf_token %}
+                                                        <div class="my-2">
+                                                            <label for="formFileLg" class="form-label">Select New Product image</label>
+                                                            <input class="form-control form-control-lg" name="image" id="formFileLg" type="file">
+                                                            <input type="hidden" name="of" value="product">
+                                                            <input type="hidden" name="id" value="{{product.id}}">
+                                                        </div>
+                                                        <button type="submit" class="btn btn-outline-dark my-2">Update Image</button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div></small>
+                                    </div></small>
+                                </div>
                             </div>
-                          </div>
                         </div>
-                      </div>
-                      <div class="modal fade" id="Update_Product{{ forloop.counter }}" tabindex="-1" aria-labelledby="Update_Product" aria-hidden="true">
+                    </div>
+                    <div class="modal fade" id="Update_Product{{ forloop.counter }}" tabindex="-1" aria-labelledby="Update_Product" aria-hidden="true">
                         <div class="modal-dialog" style="min-width: 80%;">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -231,11 +240,6 @@
                                     <form action="{% url 'update_product' product.id %}" enctype="multipart/form-data" method="post" class="px-2">
                                         {% csrf_token %}
                                         <div class="row p-0 m-0">
-                                            <div class="col-md-10 mx-auto my-1">
-                                                <div class="alert py-2 text-center alert-warning" role="alert">
-                                                    Enter Price In Rupees Only!
-                                                </div>
-                                            </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="row m-0 p-0">
                                                     <div class="col-md-4 p-2">
@@ -275,10 +279,10 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                                                                
+                                                
                                             </div>
                                             
-                                                                                        
+                                            
                                             <div class="col-md-12 mx-auto my-2">
                                                 <label for="desc" class="form-label">Product Description</label>
                                                 <textarea name="desc" class="form-control" id="desc" rows="4">{{product.Desc}}</textarea>
@@ -287,7 +291,7 @@
                                                 <select required class="form-select" id="Status" name="stock">
                                                     <option value="1">Active</option>
                                                     <option value="0">Disables</option>
-                                                  </select>
+                                                </select>
                                             </div> 
                                             <div class="col-md-5 my-2 mx-auto">
                                                 <label for="Update_Product" class="col-form-label">Product Quantity</label>
@@ -319,11 +323,6 @@
                                     <form action="{% url 'add_product' %}" enctype="multipart/form-data" method="post" class="px-2">
                                         {% csrf_token %}
                                         <div class="row p-0 m-0">
-                                            <div class="col-md-10 mx-auto my-1">
-                                                <div class="alert py-2 text-center alert-warning" role="alert">
-                                                    Enter Price In Rupees Only!
-                                                </div>
-                                            </div>
                                             <div class="col-md-12 my-2 row">
                                                 <label for="addproduct" class="col-sm-4 col-form-label">Product Image</label>
                                                 <div class="col-sm-8">
@@ -372,7 +371,7 @@
                                                 <select class="form-select" name="stock">
                                                     <option value="1">Active</option>
                                                     <option value="0">Disables</option>
-                                                  </select>
+                                                </select>
                                                 <br>
                                                 <button type="submit" class="btn btn-outline-dark my-2">Create Product</button>
                                             </div>

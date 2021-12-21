@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import make_password
 import datetime
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-    
+from django.utils.html import strip_tags
 # Create your views here.
 """
 HOMEPAGE
@@ -148,9 +148,9 @@ def UserProfile(request):
         else:
             product = None
 
-        is_order = Order.objects.filter(To=user)
+        is_order = Order.objects.filter(To=request.user.email).exists()
         if is_order == True:
-            order = Order.objects.all().filter(To=user)
+            order = Order.objects.all().filter(To=request.user.email)
         else:
             order = None
 
@@ -272,13 +272,14 @@ def AddProduct(request):
     name = request.POST['name']
     category = Category.objects.get(id=request.POST['category'])
     price = int(request.POST['price'])
+    stripe = int(request.POST['stripe'])
     discount = int(request.POST['d_price'])
 
     desc = request.POST['desc']
     stock = int(request.POST['stock'])
     q = int(request.POST['q'])
         
-    product = Product.objects.create(Image=Image, Seller=seller, Name=name, Category=category, Desc=desc, Price=price, in_stock=stock, Discount=discount, Stock=q)
+    product = Product.objects.create(Image=Image, Seller=seller, Name=name, Category=category, Desc=desc, Price=price, in_stock=stock, Discount=discount, Stock=q, Stripe=stripe )
     product.save()
 
     info(request, f"You have created {name} Product Successfully.")
@@ -660,7 +661,7 @@ def MakePayment(request):
             first_name = str(request.POST['first_name'])
             last_name = str(request.POST['last_name'])
                         
-            create_order = Order.objects.get_or_create(OrderNumber=order_id, First_Name=first_name , Last_Name=last_name, PhoneNo=phoneno, From=seller, To=email , Product=product, Address=address, Status=status)
+            create_order = Order.objects.get_or_create(OrderNumber=order_id, First_Name=first_name , Last_Name=last_name, PhoneNo=phoneno, From=seller, To=email , Product=product, Address=address, Status=status, Quantity=1)
             
             product.Stock = int(product.Stock)-1
             product.save()
@@ -703,17 +704,13 @@ def OrderSuccessfull(request,order_id):
     order.save()
     
     Discount = round(((int(order.Product.Price)-int(order.Product.Discount))/int(order.Product.Price))*100)
-    
-    email_from = "business.ritiksingh@gmail.com"
-    email_to = str(order.To) 
+    seller = order.From.Seller_Email
+    from_email = "business.ritiksingh@gmail.com"
+    to = str(order.To) 
     subject = "Order Confirmation From My Ecom"
-    message = render_to_string("email.html", {"order":order, "Discount":Discount})
+    message = render_to_string(template_name="email.html", context={"order":order, "Discount":Discount}, )
+    plain_message = strip_tags(message)
     
-    send_mail(
-        subject, 
-        message,
-        email_from,
-        [email_to],
-    )
+    send_mail(subject, plain_message, from_email, [to, seller], html_message=message)
 
     return render(request, "OrderSuccessfull.html", {"category":category, "pp":pp, "cart":cart})
