@@ -10,10 +10,10 @@
         <p class="h3 text-center mx-auto">Conatct Us</p>
     </div>
     <div class="card-body text-center">
-        <form action="" method="post">
+        <form action="{% url 'contactus' %}" method="post">
             {% csrf_token %}
             <div class="row m-0 p-0">
-                <d shadow p-3iv class="col-md-8 shadow p-3 mx-auto my-3 row">
+                <div shadow p-3iv class="col-md-8 shadow p-3 mx-auto my-3 row">
                     <label for="FullName" class="col-sm-2 fw-bold col-form-label">Full Name</label>
                     <div class="col-sm-10">
                       <input type="text" name="fullname" value="{{user.first_name}} {{user.last_name}}" placeholder="Your Name" class="form-control" id="FullName">
@@ -37,8 +37,8 @@
                       <textarea id="Message" name="message" class="form-control" rows="5"></textarea>
                     </div>
                 </div>
-                <div class="col-md-3 mx-auto my-3">
-                    <button type="submit" class="btn btn-outline-dark">Send Message</button>
+                <div class="col-md-8 mx-auto my-3">
+                    <button type="submit" class="btn btn-outline-dark text-center mx-auto">Send Message</button>
                 </div>
             </div>
             

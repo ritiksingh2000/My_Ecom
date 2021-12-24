@@ -14,6 +14,7 @@ from pathlib import Path
 import django_heroku
 import dj_database_url
 from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,12 +79,21 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DB For LocalHost
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'projects_db',
+        'USER': 'postgres',
+        'PASSWORD': 'Rr@102843',
+        'HOST': 'localhost',
     }
 }
+
+# DB For Heroku
+# import dj_database_url
+# db_from_env = dj_database_url.config(conn_max_age=800)
+# DATABASES['default'].update(db_from_env)
 
 
 # Password validation
@@ -125,8 +135,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR/'static']
 
+
+# Files UPLOAD
+# DROPBOX_OAUTH2_TOKEN = "https://www.dropbox.com/request/IVE8fTZD1434EgPZ7h7v"
+# DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 MEDIA_URL = "/upload/"
-MEDIA_ROOT = BASE_DIR/'upload'
+MEDIA_ROOT = BASE_DIR/"upload"
 
 
 # Default primary key field type
@@ -140,6 +154,7 @@ django_heroku.settings(locals())
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = "587"
-EMAIL_HOST_USER = "business.ritiksingh@gmail.com" 
-EMAIL_HOST_PASSWORD = "RS_102843_Alpha"
+EMAIL_HOST_USER = os.environ['Gmail_Host_Email'] 
+EMAIL_HOST_PASSWORD = os.environ["Gmail_Host_Password"]
 EMAIL_USE_TLS = True
+

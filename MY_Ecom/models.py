@@ -141,6 +141,17 @@ class OrderStatus(models.Model):
     def __str__(self) -> str:
         return self.Name
 
+class OrderProduct(models.Model):
+    OrderNumber = models.CharField(max_length=100, null=True)    
+    Quantity =models.CharField(max_length=200, null=True, blank=True, default=1)
+    Amount = models.CharField(max_length=100, null=True, blank=True)
+    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    Date = models.DateField(auto_now_add=True) 
+    
+    def __str__(self) -> str:
+        return f"{self.OrderNumber} | {self.Product}"
+
+
 class Order(models.Model):
     OrderNumber = models.CharField(max_length=100, null=True)
     First_Name = models.CharField(max_length=100, null=True, blank=True)
@@ -148,9 +159,9 @@ class Order(models.Model):
     PhoneNo = models.CharField(max_length=100, null=True, blank=True)
     From = models.ForeignKey(Seller, on_delete=models.CASCADE)
     To = models.CharField(max_length=100, null=True, blank=True)
-    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    Amount = models.CharField(max_length=100, null=True, blank=True)
+    Product = models.ForeignKey(OrderProduct, on_delete=models.CASCADE)
     Address = models.CharField(max_length=200, null=True, blank=True)
-    Quantity =models.CharField(max_length=200, null=True, blank=True, default=1)
     OrderDate = models.DateTimeField(auto_now_add=True)
     Status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
     PaymentStatus = models.BooleanField(default=0)

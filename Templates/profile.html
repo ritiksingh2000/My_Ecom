@@ -13,7 +13,9 @@
                 <button class="nav-link active my-2" id="v-pills-Profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Profile" type="button" role="tab" aria-controls="v-pills-Profile" aria-selected="true">Profile</button>
                 <button class="nav-link my-2" id="v-pills-Order-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Order" type="button" role="tab" aria-controls="v-pills-Order" aria-selected="false">My Order</button>
                 <button class="nav-link my-2" id="v-pills-Verification-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Verification" type="button" role="tab" aria-controls="v-pills-Verification" aria-selected="false"><small>{{verified}}Verification</small></button>
+                {% if customer.p_verify == 1 and customer.e_verify == 1 %}
                 <button class="nav-link my-2" id="v-pills-Seller-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Seller" type="button" role="tab" aria-controls="v-pills-Seller" aria-selected="false"><small>Seller Space</small></button>
+                {% endif %}
             </div>
             <div class="tab-content p-2" id="v-pills-tabContent">
                 <div class="tab-pane fade show active" id="v-pills-Profile" role="tabpanel" aria-labelledby="v-pills-Order-tab">
@@ -25,9 +27,11 @@
                 <div class="tab-pane fade p-2" id="v-pills-Verification" role="tabpanel" aria-labelledby="v-pills-Verification-tab">
                     {% include 'verification_tab.html'   %}
                 </div>
+                {% if customer.p_verify == 1 and customer.e_verify == 1 %}
                 <div class="tab-pane fade  p-2" id="v-pills-Seller" role="tabpanel" aria-labelledby="v-pills-Seller-tab">
                     {% include 'seller_space_tab.html'   %}
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

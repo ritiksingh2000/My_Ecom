@@ -11,7 +11,8 @@ urlpatterns = [
     path('products_page/<int:id>', ProductsPage, name='products_page'),
     path('all_products', AllProducts, name='all_products'),
     path('about_us', AboutUs, name='about_us'),
-    path('contact_us', ContactUs, name='contact_us'),
+    path('contact_us', Contact_Us, name='contact_us'),
+    path('contact_us/send_message', QueryMessage, name="contactus"),
     path('product_page/<int:id>', ProductPage, name='product_page'),
     path('serach/', ProductSearch, name='serach'),
 
@@ -33,6 +34,10 @@ urlpatterns = [
     path('seller/update_product/<int:id>', UpdateProduct, name="update_product"),
 
     path('update_image/', UpdateImage, name="update_image"),
+    path('Verification/', Verify, name="phone_verification"),
+    path('Verification/verify_otp', VerifyOTP, name="otp_verify"),
+    path('Verification/verify_email', VerifyEmail, name="verify_email"),
+    path('verify_user_email/verification', VerifyEmailURL),
 
 
 ]

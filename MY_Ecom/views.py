@@ -11,6 +11,10 @@ import datetime
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+import os
+import random
+from twilio.rest import Client
+
 # Create your views here.
 """
 HOMEPAGE
@@ -191,7 +195,6 @@ def UpdateUser(request):
     last_name = request.POST['last_name']
     email = request.POST['email']
     username = request.POST['username']
-    pp = request.FILES['user_pp']
     Address = request.POST['address']
     country = request.POST['Country']
     state = request.POST['State']
@@ -209,7 +212,6 @@ def UpdateUser(request):
     user.username = username
     user.save()
 
-    customer.User_Img = pp
     customer.save()
     
     info(request, "User Prodile Updated Successfully.")
@@ -391,7 +393,10 @@ def AddCustomerReview(request):
         return a_string_repeated_to_target
     stars = repeat_string("⭐",star)
 
-    review = Customer_Review.objects.create(FullName=name, About=about, Stars=stars, Review=review)
+    if len(name) == 0:
+        review = Customer_Review.objects.create(FullName=name, About=about, Stars=stars, Review=review)
+    else:
+        review = Customer_Review.objects.create(About=about, Stars=stars, Review=review)
     review.save()
     info(request, "Review Added Successfully")
     return redirect("homepage")
@@ -511,7 +516,38 @@ def AboutUs(request):
 
     return render(request, "AboutUs.html", {"category":category, "pp":pp, "cart":cart, "about":about})
 
-def ContactUs(request):
+def QueryMessage(request):
+    if request.method == "POST":
+        name = request.POST['fullname']
+        email = request.POST['email']
+        about = request.POST['about']
+        message = request.POST['message']
+        contact_message = ContactUs.objects.create(FullName=name, About=about, Email=email, Body=message)
+        #To customer
+        send_mail(
+            f"Your Message Is Recived | My_Ecom ",
+            f"We Recived Your Message About:{about}\n\n We will resposnd as fast as possible.",
+            os.environ['Gmail_Host_Email'],
+            [email],
+            fail_silently=True,
+        )
+        #To Owner
+        send_mail(
+            f"{about} | From : {name}",
+            message,
+            os.environ['Gmail_Host_Email'],
+            [os.environ['Gmail_Host_Email']],
+            fail_silently=True,
+        )
+        contact_message.save()
+        info(request, "Message Sent Successfully.")
+
+    else:
+        info(request, "Unable to send message. Please Try Again")
+    return redirect("contact_us")
+
+
+def Contact_Us(request):
     cart = None
     if request.user.is_authenticated:
         user = User.objects.get(id=request.user.id)
@@ -533,6 +569,7 @@ def ContactUs(request):
 
 
     return render(request, "ContactUs.html", {"category":category, "pp":pp, "cart":cart})
+
 
 def ProductPage(request, id):
     cart = None
@@ -714,3 +751,87 @@ def OrderSuccessfull(request,order_id):
     send_mail(subject, plain_message, from_email, [to, seller], html_message=message)
 
     return render(request, "OrderSuccessfull.html", {"category":category, "pp":pp, "cart":cart})
+
+
+def Verify(request):
+    cart = None
+    if request.user.is_authenticated:
+        user = User.objects.get(id=request.user.id)
+        customer = Customer.objects.get(User=user)
+        pp = f"{customer.User_Img}"
+    else:
+        pp = "upload/Profile_img/download.png"
+    category = Category.objects.all()
+    if request.user.is_authenticated: 
+        if UserCart.objects.filter(User=user).exists():
+            cart = UserCart.objects.all().filter(User=user)
+    else:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+            cart = GuestCart.objects.all().filter(IP=ip)
+            
+    PhoneNo = request.POST['PhoneNo']
+    OTP = random.randrange(100000,999999)
+    account_sid = os.environ['TWILIO_ACCOUNT_SID']
+    auth_token = os.environ['TWILIO_AUTH_TOKEN']
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+                                body=f'Hi there, Your 6-Digit My Ecom Phone Number Verification OTP is {OTP}',
+                                from_='+12086034813',
+                                to=f'+91{PhoneNo}'
+                            )
+    info(request, "A OTP was generated and sent to your mobile number.")
+
+    return render(request, "Verify.html", {"category":category, "pp":pp, "cart":cart, "OTP":OTP, "PhoneNo":PhoneNo})
+
+
+def VerifyOTP(request):
+    if request.method == "POST":
+        OTP = request.POST['OTP']
+        otp =request.POST['otp']
+        if otp == OTP:
+            user = User.objects.get(id=request.user.id)
+            customer = Customer.objects.get(User=user)
+            customer.p_verify = 1
+            customer.Phone_No = request.POST['PhoneNo']
+            customer.save()
+            info(request, "Phone Number Verified. Please Verify Your Email Also.")
+            return redirect("user_profile")
+        else:
+            info(request, "Wrong OTP. ")
+        
+    else:
+        info(request, "Unable to verify. Please try again.")
+    return redirect("phone_verification")
+    
+def VerifyEmail(request):
+    import socket
+    if request.method == 'POST':
+        url = f"{request.get_host()}/verify_user_email/verification?verify={request.user.id}&set_verification=true"
+        s_to = str(request.POST['email'])
+        about = f"To verify {request.user.first_name} {request.user.last_name}'s My Ecom Account"
+        body = f"To Verify your My Ecom Email Please click the link bellow: \n\n\n\n {url}"
+        send_mail(
+            about,
+            body,
+            os.environ['Gmail_Host_Email'],
+            [s_to],
+            fail_silently=True,
+        )
+        info(request, "An Email is sent to verify. ")
+    else : 
+        info(request, "Unable to send email at this moment. Please try again later")
+    return redirect("user_profile")
+
+def VerifyEmailURL(request):
+    user = User.objects.get(id=int(request.GET['verify']))
+    customer = Customer.objects.get(User=user)
+    customer.e_verify = 1
+    customer.save()
+    info(request, "Email Verification Completed.")
+    
+    return redirect("user_profile")

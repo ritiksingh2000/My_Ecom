@@ -6,6 +6,20 @@
 {% block main %}
 {% load static %}
 
+<div class="row m-0 p-0">
+    <div class="col-md-10 mx-auto card py-5 my-4">
+        <form action="{% url 'otp_verify' %}" method="post">
+            {% csrf_token %}
+            <center>
+                <label for="otp" class="form-label mx-auto h2 my-3">Enter The OTP Sent to {{PhoneNo}}</label>
+                <input type="text" name="otp" id="otp" class="form-control my-3">
+                <input type="hidden" value="{{OTP}}" name="OTP">
+                <input type="hidden" value="{{PhoneNo}}" name="PhoneNo">
+                <button type="submit" class="btn btn-outline-dark mx-auto text-center my-3">Verify</button>
+            </center>
+        </form>
+    </div>
+</div>
 
 
 {% endblock %}

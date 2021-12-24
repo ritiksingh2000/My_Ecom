@@ -1,8 +1,41 @@
 <div class="border border-dark p-2 rounded">
     {% if verified == "🟢" %}
-    
+    <p class="h2 p-3 text-warning">✅ Phone Number And Email Verification Complete.</p>
     {% else %}
-    
     <p class="h3 text-warning">⚠ Please Complete The Verification Process.</p>
+
+    <div class="row m-0 p-0">
+        {% if customer.p_verify == 0  %}
+        <div class="col-md-10 my-4 mx-auto rounded shadow">
+            <form action="{% url 'phone_verification' %}" class="row m-0 p-0" method="post">
+                {% csrf_token %}
+                <p class="h3">Enter Your Phone Number And Verify</p>
+                <div class="col-md-8 p-2 form-floating mb-3">
+                    <input type="tel" maxlength="10" class="form-control" id="floatingInput" name="PhoneNo" placeholder="Your Phone number">
+                    <label for="floatingInput">Phone Number</label>
+                  </div>
+                  <div class="col-md-4 p-2">
+                    <button type="submit" class="btn-lg btn-outline-dark">Verify</button>
+                  </div>
+            </form>
+        </div>
+        {% elif customer.e_verify == 0 %}
+        <p class="h3 text-warning">✅ Phone Number Verification Complete.</p>
+        <div class="col-md-10 my-4 mx-auto rounded shadow">
+            <form action="{% url 'verify_email' %}" class="row m-0 p-0" method="post">
+                {% csrf_token %}
+                <p class="h3">Enter Your Email And Verify</p>
+                <div class="col-md-8 p-2 form-floating mb-3">
+                    <input type="tel" name=email maxlength="10" class="form-control" id="floatingInput" readonly value="{{user.email}}">
+                    <label for="floatingInput">Email </label>
+                  </div>
+                  <div class="col-md-4 p-2">
+                    <button type="submit" class="btn-lg btn-outline-dark">Verify</button>
+                  </div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
     {% endif %}
 </div>
