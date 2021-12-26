@@ -84,11 +84,11 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['POSTGRES_DATABASE'],
-        'USER': os.environ['POSTGRES_USER'],
-        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-        'HOST': os.environ['POSTGRES_HOST'],
-        'PORT' : os.environ['POSTGRES_PORT'],
+        'NAME': str(os.environ['POSTGRES_DATABASE']),
+        'USER': str(os.environ['POSTGRES_USER']),
+        'PASSWORD': str(os.environ['POSTGRES_PASSWORD']),
+        'HOST': str(os.environ['POSTGRES_HOST']),
+        'PORT' : str(os.environ['POSTGRES_PORT']),
     }
 }
 
@@ -145,9 +145,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 AWS_LOCATION = 'upload'
-AWS_ACCESS_KEY_ID = os.environ['AWS_S3_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = os.environ['AWS_S3_SECRET_ACCESS_KEY']
-AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+AWS_ACCESS_KEY_ID = str(os.environ['AWS_S3_ACCESS_KEY_ID'])
+AWS_SECRET_ACCESS_KEY = str(os.environ['AWS_S3_SECRET_ACCESS_KEY'])
+AWS_STORAGE_BUCKET_NAME = str(os.environ['AWS_STORAGE_BUCKET_NAME'])
 AWS_S3_QUERYSTRING_AUTH = False
 AWS_DEFAULT_ACL = None
 
@@ -163,7 +163,7 @@ django_heroku.settings(locals())
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = "587"
-EMAIL_HOST_USER = os.environ['Gmail_Host_Email'] 
-EMAIL_HOST_PASSWORD = os.environ["Gmail_Host_Password"]
+EMAIL_HOST_USER = str(os.environ['Gmail_Host_Email']) 
+EMAIL_HOST_PASSWORD = str(os.environ["Gmail_Host_Password"])
 EMAIL_USE_TLS = True
 
