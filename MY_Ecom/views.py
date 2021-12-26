@@ -399,9 +399,11 @@ def AddCustomerReview(request):
     stars = repeat_string("⭐",star)
 
     if len(name) == 0:
-        review = Customer_Review.objects.create(FullName=name, About=about, Stars=stars, Review=review)
-    else:
         review = Customer_Review.objects.create(About=about, Stars=stars, Review=review)
+        
+    else:
+        review = Customer_Review.objects.create(FullName=name, About=about, Stars=stars, Review=review)
+        
     review.save()
     info(request, "Review Added Successfully")
     return redirect("homepage")
