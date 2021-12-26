@@ -88,13 +88,12 @@ DATABASES = {
         'USER': os.environ['POSTGRES_USER'],
         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
         'HOST': os.environ['POSTGRES_HOST'],
+        'PORT' : os.environ['POSTGRES_PORT'],
     }
 }
 
-# DB For Heroku
-# import dj_database_url
-# db_from_env = dj_database_url.config(conn_max_age=800)
-# DATABASES['default'].update(db_from_env)
+db_from_env = dj_database_url.config(conn_max_age=800)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
