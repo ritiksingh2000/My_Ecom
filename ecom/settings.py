@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'MY_Ecom',
     'ckeditor',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -83,10 +84,10 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'projects_db',
-        'USER': 'postgres',
-        'PASSWORD': 'Rr@102843',
-        'HOST': 'localhost',
+        'NAME': os.environ['POSTGRES_DATABASE'],
+        'USER': os.environ['POSTGRES_USER'],
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+        'HOST': os.environ['POSTGRES_HOST'],
     }
 }
 
@@ -129,19 +130,26 @@ USE_L10N = True
 USE_TZ = True
 
 
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR/'static']
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
 
-# Files UPLOAD
-# DROPBOX_OAUTH2_TOKEN = "https://www.dropbox.com/request/IVE8fTZD1434EgPZ7h7v"
-# DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
-MEDIA_URL = "/upload/"
-MEDIA_ROOT = BASE_DIR/"upload"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_LOCATION = 'upload'
+AWS_ACCESS_KEY_ID = os.environ['AWS_S3_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_S3_SECRET_ACCESS_KEY']
+AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+AWS_S3_QUERYSTRING_AUTH = False
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -21,7 +21,7 @@ HOMEPAGE
 """
 
 def HomePage(request):
-    pp = "upload/Profile_img/download.png"
+    pp = "static/Profile_img/download.png"
     cart = None
     items = 0
     customer_review = Customer_Review.objects.all()
@@ -33,7 +33,7 @@ def HomePage(request):
             pp = f"{user.User_Img}"
         else:
             user = User.objects.get(id=request.user.id)
-            customer_create = Customer.objects.create(User=user, User_Img="upload/Profile_img/download.png")
+            customer_create = Customer.objects.create(User=user, User_Img="static/Profile_img/download.png")
             customer_create.save()
             user_address = User_Address.objects.create(User=user)
             user_address.save()
@@ -141,7 +141,7 @@ def UserProfile(request):
         
         category = Category.objects.all()
 
-        if Seller.objects.all().exists():
+        if Seller.objects.all().filter(User=user):
             seller = Seller.objects.get(User=user)
         else:
             seller=None
@@ -274,14 +274,13 @@ def AddProduct(request):
     name = request.POST['name']
     category = Category.objects.get(id=request.POST['category'])
     price = int(request.POST['price'])
-    stripe = int(request.POST['stripe'])
     discount = int(request.POST['d_price'])
 
     desc = request.POST['desc']
     stock = int(request.POST['stock'])
     q = int(request.POST['q'])
         
-    product = Product.objects.create(Image=Image, Seller=seller, Name=name, Category=category, Desc=desc, Price=price, in_stock=stock, Discount=discount, Stock=q, Stripe=stripe )
+    product = Product.objects.create(Image=Image, Seller=seller, Name=name, Category=category, Desc=desc, Price=price, in_stock=stock, Discount=discount, Stock=q )
     product.save()
 
     info(request, f"You have created {name} Product Successfully.")
@@ -346,9 +345,14 @@ def AddCart(request, id):
         price = int(product.Price)
         discount = int(product.Discount)
         if UserCart.objects.filter(User=user, Product=product).exists():
+            if product.Discount == 0:
+                p_price =product.Price
+            else:
+                p_price =product.Discount
+                
             cart = UserCart.objects.get(User=user, Product=product)
             cart.Quantity = int(cart.Quantity)+1
-            cart.Price = int(cart.Price)*int(cart.Quantity)
+            cart.Price = int(p_price)*int(cart.Quantity)
             cart.Discount = int(cart.Discount)*int(cart.Quantity)
             cart.save()
         else:
@@ -368,10 +372,11 @@ def AddCart(request, id):
         price = int(product.Price)
         discount = int(product.Discount)
         if GuestCart.objects.filter(IP=ip, Product=product).exists():
+            
             cart = GuestCart.objects.get(IP=ip, Product=product)
             cart.Quantity = int(cart.Quantity)+1
-            cart.Price = int(cart.Price)*int(cart.Quantity)
-            cart.Discount = int(cart.Discount)*int(cart.Quantity)
+            cart.Price = int(product.Price)*int(cart.Quantity)
+            cart.Discount = int(product.Discount)*int(cart.Quantity)
             cart.save()
         else:
             addtocart = GuestCart.objects.create(IP=ip, Product=product, Price=price, Discount=discount)
@@ -417,10 +422,38 @@ def RemoveCart(request, id):
     info(request, "Product Was Removed From Cart")
     return redirect("homepage")
 
-def UpdateCart(request):
-    product = Product.objects.get(id=int(request.GET['p_id']))
+def AddProductQty(request):
+    product_id = request.GET['product_id']
+    cart_id = request.GET['cart_id']
+    product = Product.objects.get(id=int(product_id))
     if request.user.is_authenticated:
-        cart = UserCart.objects.get(id=int(request.GET['id'], Product=product))
+        cart = UserCart.objects.get(id=int(cart_id), Product=product)
+    else:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')        
+        cart = GuestCart.objects.get(IP=ip, Product=product)
+    
+    cart.Quantity = cart.Quantity+1
+    cart.Price = int(product.Price)*int(cart.Quantity)
+    cart.Discount = int(product.Discount)*int(cart.Quantity)
+
+    if cart.Quantity > 0:
+        cart.save()
+    else:
+        cart.delete()
+    info(request, "Product Increased")
+
+    return redirect("homepage")
+
+def SubProductQty(request):
+    product_id = request.GET['product_id']
+    cart_id = request.GET['cart_id']
+    product = Product.objects.get(id=int(product_id))
+    if request.user.is_authenticated:
+        cart = UserCart.objects.get(id=int(cart_id), Product=product)
     else:
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
@@ -429,27 +462,31 @@ def UpdateCart(request):
             ip = request.META.get('REMOTE_ADDR')        
         cart = GuestCart.objects.get(IP=ip, Product=product)
 
-    ln = int(request.GET['ln'])
-    cart.Quantity = int(request.GET[f'q{ln}'])
-    cart.Price = int(cart.Price)*int(cart.Quantity)
-    cart.Discount = int(cart.Discount)*int(cart.Quantity)
+            
+    cart.Quantity = cart.Quantity-1
+    cart.Price = int(product.Price)*int(cart.Quantity)
+    cart.Discount = int(product.Discount)*int(cart.Quantity)
+
     if cart.Quantity > 0:
         cart.save()
+        info(request, "Product Reduced")
     else:
         cart.delete()
-    info(request, "Product Updated")
+        info(request, "Product Deleted")
+    
 
     return redirect("homepage")
 
+
 def ProductsPage(request, id):
     cart = None
-    pp = "upload/Profile_img/download.png"
+    pp = "static/Profile_img/download.png"
     if request.user.is_authenticated:
         user = User.objects.get(id=request.user.id)
         customer = Customer.objects.get(User=user)
         pp = f"{customer.User_Img}"
     else:
-        pp = "upload/Profile_img/download.png"
+        pp = "static/Profile_img/download.png"
     categories = Category.objects.get(id=id)
     category = Category.objects.all()
     products = Product.objects.all().filter(Category=categories)
@@ -474,7 +511,7 @@ def AllProducts(request):
         customer = Customer.objects.get(User=user)
         pp = f"{customer.User_Img}"
     else:
-        pp = "upload/Profile_img/download.png"
+        pp = "static/Profile_img/download.png"
     category = Category.objects.all()
     products = Product.objects.all()
     if request.user.is_authenticated: 
@@ -498,7 +535,7 @@ def AboutUs(request):
         customer = Customer.objects.get(User=user)
         pp = f"{customer.User_Img}"
     else:
-        pp = "upload/Profile_img/download.png"
+        pp = "static/Profile_img/download.png"
     category = Category.objects.all()
     if request.user.is_authenticated: 
         if UserCart.objects.filter(User=user).exists():
@@ -554,7 +591,7 @@ def Contact_Us(request):
         customer = Customer.objects.get(User=user)
         pp = f"{customer.User_Img}"
     else:
-        pp = "upload/Profile_img/download.png"
+        pp = "static/Profile_img/download.png"
     category = Category.objects.all()
     if request.user.is_authenticated: 
         if UserCart.objects.filter(User=user).exists():
@@ -578,7 +615,7 @@ def ProductPage(request, id):
         customer = Customer.objects.get(User=user)
         pp = f"{customer.User_Img}"
     else:
-        pp = "upload/Profile_img/download.png"
+        pp = "static/Profile_img/download.png"
     category = Category.objects.all()
     if request.user.is_authenticated: 
         if UserCart.objects.filter(User=user).exists():
@@ -608,7 +645,7 @@ def ProductSearch(request):
             customer = Customer.objects.get(User=user)
             pp = f"{customer.User_Img}"
         else:
-            pp = "upload/Profile_img/download.png"
+            pp = "static/Profile_img/download.png"
         category = Category.objects.all()
         if request.user.is_authenticated: 
             if UserCart.objects.filter(User=user).exists():
@@ -639,7 +676,7 @@ def BuyProduct(request, id):
         pp = f"{customer.User_Img}"
         address = User_Address.objects.get(User=request.user)
     else:
-        pp = "upload/Profile_img/download.png"
+        pp = "static/Profile_img/download.png"
     category = Category.objects.all()
     if request.user.is_authenticated: 
         if UserCart.objects.filter(User=user).exists():
@@ -653,15 +690,69 @@ def BuyProduct(request, id):
             cart = GuestCart.objects.all().filter(IP=ip)
 
     product = Product.objects.get(id=id)
-    order_id = f"ODR-{datetime.datetime.now()}"
+    order_id = f"ODR-{datetime.datetime.now()}".replace(" ","")
     if product.Discount ==0 :
         odr_amount = product.Price
     else:
         odr_amount = product.Discount
     
     Discount = round(((int(product.Price)-int(product.Discount))/int(product.Price))*100)
+    Discount_Amount = int((Discount/100)*product.Price )
     
-    return render(request, "BuyProduct.html", {"category":category, "pp":pp, "cart":cart, "product":product, "odr_amount":odr_amount, "order_id":order_id, "Discount":Discount, "address":address, "customer":customer})
+    if request.user.is_authenticated:
+        return render(request, "BuyProduct.html", {"category":category, "pp":pp, "cart":cart, "product":product, "odr_amount":odr_amount, "order_id":order_id, "Discount":Discount, "address":address, "customer":customer, "Discount_Amount":Discount_Amount})
+    else:
+        return render(request, "BuyProduct.html", {"category":category, "pp":pp, "cart":cart, "product":product, "odr_amount":odr_amount, "order_id":order_id, "Discount":Discount, "Discount_Amount":Discount_Amount})
+
+def CartCheckout(request):
+    cart = None
+    if request.user.is_authenticated:
+        user = User.objects.get(id=request.user.id)
+        customer = Customer.objects.get(User=user)
+        pp = f"{customer.User_Img}"
+        address = User_Address.objects.get(User=request.user)
+    else:
+        pp = "static/Profile_img/download.png"
+    category = Category.objects.all()
+    if request.user.is_authenticated: 
+        if UserCart.objects.filter(User=user).exists():
+            cart = UserCart.objects.all().filter(User=user)
+    else:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+            cart = GuestCart.objects.all().filter(IP=ip)
+
+    order_id = f"ODR-{datetime.datetime.now()}".replace(" ","")
+        
+    if request.user.is_authenticated:
+        odr_cart = UserCart.objects.all().filter(User=user)
+        items = sum(odr_cart.values_list("Quantity", flat=True))
+        print(items)
+        
+        odr_price = sum(odr_cart.values_list("Price", flat=True))
+        odr_amount = sum(odr_cart.values_list("Discount", flat=True))
+        odr_discount = int(odr_price-odr_amount)
+        print(odr_amount)
+        
+        
+    
+        
+        return render(request, "Checkout.html", {"category":category, "pp":pp, "cart":cart, "odr_cart":odr_cart, "odr_amount":odr_amount, "odr_price":odr_price, "odr_discount":odr_discount ,"items":items, "order_id":order_id,  "address":address, "customer":customer})
+    else:
+        odr_cart = GuestCart.objects.all().filter(IP=ip)
+        items = sum(odr_cart.values_list("Quantity", flat=True))
+        print(items)
+        
+        odr_price = sum(odr_cart.values_list("Price", flat=True))
+        odr_discount = sum(odr_cart.values_list("Discount", flat=True))
+        odr_amount = int((odr_price+odr_discount)/100)
+        print(odr_amount)
+        
+        
+        return render(request, "Checkout.html", {"category":category, "pp":pp, "cart":cart, "odr_cart":odr_cart, "odr_amount":odr_amount, "odr_price":odr_price, "odr_discount":odr_discount ,"items":items, "order_id":order_id})
 
 def MakePayment(request):
     if request.method == "POST":
@@ -671,7 +762,7 @@ def MakePayment(request):
             customer = Customer.objects.get(User=user)
             pp = f"{customer.User_Img}"
         else:
-            pp = "upload/Profile_img/download.png"
+            pp = "static/Profile_img/download.png"
         category = Category.objects.all()
         if request.user.is_authenticated: 
             if UserCart.objects.filter(User=user).exists():
@@ -686,9 +777,10 @@ def MakePayment(request):
 
     
         if request.POST['type'] == "product_payment":
+            type = "product_payment"
             p_id = int(request.POST['p_id'])
             product = Product.objects.get(id=p_id)
-            odr_amount = request.POST['odr_amount']
+            Amount = request.POST['odr_amount']
             order_id = request.POST['order_id']
             seller = Seller.objects.get(id=int(product.Seller.id))
             address = f"{request.POST['address']} , {request.POST['state']}, {request.POST['country']}, {request.POST['pincode']}"
@@ -697,16 +789,47 @@ def MakePayment(request):
             email = str(request.POST['email'])
             first_name = str(request.POST['first_name'])
             last_name = str(request.POST['last_name'])
-                        
-            create_order = Order.objects.get_or_create(OrderNumber=order_id, First_Name=first_name , Last_Name=last_name, PhoneNo=phoneno, From=seller, To=email , Product=product, Address=address, Status=status, Quantity=1)
+
+            order_product = OrderProduct.objects.create(OrderNumber=order_id, Quantity=1, Amount=Amount, Product=product)
+            order_product.save()
+            create_order = Order.objects.get_or_create(OrderNumber=order_id, First_Name=first_name , Last_Name=last_name, PhoneNo=phoneno, From=seller, To=email , Amount=Amount, Address=address, Status=status)
             
             product.Stock = int(product.Stock)-1
             product.save()
             
-            return render(request, "PaymentPage.html",{"category":category, "pp":pp, "cart":cart, "product":product, "odr_amount":odr_amount, "order_id":order_id})
+            return render(request, "PaymentPage.html",{"category":category, "pp":pp, "cart":cart, "product":product, "odr_amount":Amount, "order_id":order_id, "type":type})
         
-        elif request.POST['type'] == "cart_payment":
-            return redirect("homepage")
+        elif request.POST['type'] == "cart_checkout":
+            type = "cart_checkout"
+            Amount = request.POST['odr_amount']
+            order_id = request.POST['order_id']
+            address = f"{request.POST['address']} , {request.POST['state']}, {request.POST['country']}, {request.POST['pincode']}"
+            status = OrderStatus.objects.get(id=1)
+            phoneno = str(request.POST['phone'])
+            email = str(request.POST['email'])
+            first_name = str(request.POST['first_name'])
+            last_name = str(request.POST['last_name'])
+            items = sum(cart.values_list("Quantity", flat=True))
+            
+            for i in cart:
+                if i.Discount == 0:
+                    p_price = i.Price
+                else:
+                    p_price = i.Discount
+                product = i.Product
+                product.Stock = int(product.Stock)-1
+                product.save()
+                seller = Seller.objects.get(id=int(product.Seller.id))
+                Quantity = i.Quantity
+                Product_Amount = p_price
+                order_product = OrderProduct.objects.create(OrderNumber=order_id, Quantity=Quantity, Amount=Product_Amount, Product=product)
+                order_product.save()
+            
+            create_order = Order.objects.get_or_create(OrderNumber=order_id, First_Name=first_name , Last_Name=last_name, PhoneNo=phoneno, From=seller, To=email , Amount=Amount, Address=address, Status=status)
+            
+            
+            
+            return render(request, "PaymentPage.html",{"category":category, "pp":pp, "cart":cart, "product":product, "odr_amount":Amount, "order_id":order_id,"items":items, "type":type})
         else:
             info(request, "Server Error Please Try Again.")
             return redirect("homepage")
@@ -722,7 +845,7 @@ def OrderSuccessfull(request,order_id):
         customer = Customer.objects.get(User=user)
         pp = f"{customer.User_Img}"
     else:
-        pp = "upload/Profile_img/download.png"
+        pp = "static/Profile_img/download.png"
     category = Category.objects.all()
     if request.user.is_authenticated: 
         if UserCart.objects.filter(User=user).exists():
@@ -739,13 +862,20 @@ def OrderSuccessfull(request,order_id):
     order.Status = OrderStatus.objects.get(id=2)
     order.PaymentStatus = 1
     order.save()
+    order_product = OrderProduct.objects.filter(OrderNumber=order_id)
+    print(order_product)
+    items = order_product.count()
     
-    Discount = round(((int(order.Product.Price)-int(order.Product.Discount))/int(order.Product.Price))*100)
+    if items <= 1:
+        order_product = OrderProduct.objects.get(OrderNumber=order_id)
+    else:
+        order_product = OrderProduct.objects.all().filter(OrderNumber=order_id)
+    
     seller = order.From.Seller_Email
     from_email = "business.ritiksingh@gmail.com"
     to = str(order.To) 
     subject = "Order Confirmation From My Ecom"
-    message = render_to_string(template_name="email.html", context={"order":order, "Discount":Discount}, )
+    message = render_to_string(template_name="email.html", context={"order":order, "order_product":order_product, 'items':items} )
     plain_message = strip_tags(message)
     
     send_mail(subject, plain_message, from_email, [to, seller], html_message=message)
@@ -760,7 +890,7 @@ def Verify(request):
         customer = Customer.objects.get(User=user)
         pp = f"{customer.User_Img}"
     else:
-        pp = "upload/Profile_img/download.png"
+        pp = "static/Profile_img/download.png"
     category = Category.objects.all()
     if request.user.is_authenticated: 
         if UserCart.objects.filter(User=user).exists():
@@ -820,7 +950,7 @@ def VerifyEmail(request):
             body,
             os.environ['Gmail_Host_Email'],
             [s_to],
-            fail_silently=True,
+            fail_silently=False,
         )
         info(request, "An Email is sent to verify. ")
     else : 

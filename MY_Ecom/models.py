@@ -8,7 +8,7 @@ from ckeditor.fields import RichTextField
 
 class Customer(models.Model):
     User = models.ForeignKey(User, on_delete=models.CASCADE)
-    User_Img = models.ImageField(null=True, upload_to='upload/Profile_img')
+    User_Img = models.ImageField(upload_to="UserProfile" , null=True, blank=True)
     Phone_No = models.CharField(max_length=100, null=True)
     e_verify = models.BooleanField(default=0)
     p_verify = models.BooleanField(default=0)
@@ -37,7 +37,7 @@ class User_Address(models.Model):
 
 class Seller(models.Model):
     User = models.ForeignKey(User, on_delete=models.CASCADE)
-    Business_Logo = models.ImageField(upload_to="upload/seller/logo", default="upload/seller/logo/default_logo.png")
+    Business_Logo = models.ImageField(upload_to="SellerLogo", default="static/seller/logo/default_logo.png")
     Seller_Name = models.CharField(max_length=200, null=True)
     Seller_PhoneNo = models.CharField(max_length=200, null=True)
     Seller_Email = models.CharField(max_length=200, null=True)
@@ -53,7 +53,7 @@ class Seller(models.Model):
 
 
 class Category(models.Model):
-    Image = models.ImageField(null=True, upload_to="upload/category_img/", blank=True)
+    Image = models.ImageField(upload_to="CategoryImage", null=True, blank=True)
     Name = models.CharField(max_length=100, null=True)
     Date = models.DateTimeField(auto_now_add=True)
 
@@ -64,7 +64,7 @@ class Category(models.Model):
 class Product(models.Model):
     Seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     Name = models.CharField(max_length=100, null=True)
-    Image = models.ImageField(null=True, upload_to="upload/product_img/")
+    Image = models.ImageField(upload_to="ProductImage", null=True, blank=True)
     Category = models.ForeignKey(Category, on_delete=models.CASCADE)
     Desc = models.TextField(null=True)
     Price = models.IntegerField(null=True)
@@ -80,36 +80,7 @@ class Product(models.Model):
             active = "🔴"
         return f"{self.Name} | {self.Price} | {active}"
     
-    def save(self, *args, **kwargs):
-        super().save()
-        img = Image.open(self.Image.path)
-        width, height = img.size  # Get dimensions
-
-        if width > 300 and height > 400:
-            # keep ratio but shrink down
-            img.thumbnail((width, height))
-
-        # check which one is smaller
-        if height < width:
-            # make square by cutting off equal amounts left and right
-            left = (width - height) / 2
-            right = (width + height) / 2
-            top = 0
-            bottom = height
-            img = img.crop((left, top, right, bottom))
-
-        elif width < height:
-            # make square by cutting off bottom
-            left = 0
-            right = width
-            top = 0
-            bottom = width
-            img = img.crop((left, top, right, bottom))
-
-        if width > 300 and height > 400:
-            img.thumbnail((300, 400))
-
-        img.save(self.Image.path)
+    
 
 
 
@@ -141,26 +112,16 @@ class OrderStatus(models.Model):
     def __str__(self) -> str:
         return self.Name
 
-class OrderProduct(models.Model):
-    OrderNumber = models.CharField(max_length=100, null=True)    
-    Quantity =models.CharField(max_length=200, null=True, blank=True, default=1)
-    Amount = models.CharField(max_length=100, null=True, blank=True)
-    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    Date = models.DateField(auto_now_add=True) 
-    
-    def __str__(self) -> str:
-        return f"{self.OrderNumber} | {self.Product}"
 
 
 class Order(models.Model):
-    OrderNumber = models.CharField(max_length=100, null=True)
+    OrderNumber = models.CharField(max_length=100, null=True, blank=True)
     First_Name = models.CharField(max_length=100, null=True, blank=True)
     Last_Name = models.CharField(max_length=100, null=True, blank=True)
     PhoneNo = models.CharField(max_length=100, null=True, blank=True)
     From = models.ForeignKey(Seller, on_delete=models.CASCADE)
     To = models.CharField(max_length=100, null=True, blank=True)
     Amount = models.CharField(max_length=100, null=True, blank=True)
-    Product = models.ForeignKey(OrderProduct, on_delete=models.CASCADE)
     Address = models.CharField(max_length=200, null=True, blank=True)
     OrderDate = models.DateTimeField(auto_now_add=True)
     Status = models.ForeignKey(OrderStatus, on_delete=models.CASCADE)
@@ -173,6 +134,19 @@ class Order(models.Model):
         else:
             PaymentStatus = "🔴"
         return f"{self.To} | {self.From} | {self.Status} | {PaymentStatus}"
+    
+    
+class OrderProduct(models.Model):
+    OrderNumber = models.CharField(max_length=200, null=True, blank=True, default=1)   
+    Quantity = models.CharField(max_length=200, null=True, blank=True, default=1)
+    Amount = models.CharField(max_length=100, null=True, blank=True)
+    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    Date = models.DateField(auto_now_add=True) 
+    
+    def __str__(self) -> str:
+        return f"{self.OrderNumber} | {self.Product}"
+
+
 
 class UserCart(models.Model):
     User = models.ForeignKey(User, on_delete=models.CASCADE)

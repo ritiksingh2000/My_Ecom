@@ -1,37 +1,52 @@
 {% extends 'base.html' %}
 {% block title %}
-<title> Checkout | {{product.Name}}</title>
+<title> Cart Checkout | My Ecom</title>
 {% endblock %}
 
 {% block main %}
 {% load static %}
-<div class="container">
+<div class="m-2">
+    <p class="h1 m-4 text-center p-2 bg-white rounded shadow">Cart Checkout</p>
     <div class="bg-white my-4 row m-0 p-0">
         {% if user.is_authenticated %}
-        <div class="col-md-7 p-3 mx-auto">
-            <div class="card my-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{product.Image}}" alt="" class="img-fluid">
-                        </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title fs-3">{{product.Name}}</h5>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><b>Seller : </b><img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{product.Seller.Business_Logo}}" width="36px">{{product.Seller.Seller_Name}}</li>
-                                <li class="list-group-item"><b>Seller Location : </b>{{product.Seller.State}}, {{product.Seller.Country}}</li>
-                                
-                                <li class="list-group-item"><b>Category : </b>{{product.Category.Name}}</li>
-                                <li class="list-group-item">{% if product.Discount == 0 %}
-                                    <p class="fw-bold fs-4">${{product.Price}} </p>
-                                    {% else %}
-                                    <p class="fs-4"><b>${{product.Discount}}</b> <strike class="text-muted small fst-italic">${{product.Price}}</strike></p>
-                                    {% endif %}</li>
-                                </ul>
+        <div class="col-md-8 p-3 mx-auto">
+            <small>
+                <div class="row m-0 p-0">
+                    <p class="h2 my-2">Total {{items}} Products In Your Cart</p>
+            {% for odr_cart in odr_cart %}
+            <div class="col-lg-6 p-3">
+                <div class="card my-3">
+                    <div class="row g-0">
+                        <div class="col-md-3">
+                            <img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{odr_cart.Product.Image}}" alt="" class="img-fluid">
+                            </div>
+                        <div class="col-md-9">
+                            <div class="card-body">
+                                <h5 class="card-title fs-3">{{odr_cart.Product.Name}}</h5>
+                                <ul class="list-group list-group-flush">
+                                    
+                                    <li class="list-group-item"><b>Quantity : </b>{{odr_cart.Quantity}}</li>
+                                    <li class="list-group-item">{% if odr_cart.Discount == 0 or odr_cart.Product.Discount == "0" %}
+                                        <p class="fw-bold fs-4">${{odr_cart.Product.Price }}.00 </p>
+                                        {% else %}
+                                        <p class="fs-4"><b>${{ odr_cart.Product.Discount }}.00</b> <strike class="text-muted small fst-italic">${{odr_cart.Product.Price}}.00</strike></p>
+                                        {% endif %}
+                                        
+                                        {% if odr_cart.Discount == 0 or odr_cart.Product.Discount == "0" %}
+                                        <p class="fw-bold fs-6"><b>Total :</b> ${{odr_cart.Price }}.00 </p>
+                                        {% else %}
+                                        <p class="fs-6"><b>Total :</b><b>${{ odr_cart.Discount }}.00</b> <strike class="text-muted small fst-italic">${{odr_cart.Price}}.00</strike></p>
+                                        {% endif %}</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
+            </div>
+            {% endfor %}
+                    
                 </div>
+            </small>
                 
                 <form action="{% url 'payment_page' %}" method="post">
                     {% csrf_token %}
@@ -91,7 +106,7 @@
                             <input type="hidden" name="order_id" value="{{order_id}}">
                             <input type="hidden" name="odr_amount" value="{{odr_amount}}">
                             <input type="hidden" name="p_id" value="{{product.id}}">
-                            <input type="hidden" name="type" value="product_payment">
+                            <input type="hidden" name="type" value="cart_checkout">
                         </div>
                     </div>
                     <div class="d-grid my-3 gap-2">
@@ -100,21 +115,27 @@
                 </form>
                 
             </div>
-            <div class="col-md-5 p-3 mx-auto">
+            <div class="col-md-4 p-3 mx-auto">
                 
                 <ul class="list-group my-3 mb-3">
                     <p class="h3">Payment Details</p>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
-                            <h6 class="my-0">Product Price</h6>
+                            <h6 class="my-0">Total Price</h6>
                         </div>
-                        <span class="text-muted">${{product.Price}}</span>
+                        <span class="text-muted">${{odr_price}}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Total Products</h6>
+                        </div>
+                        <span class="text-muted">${{items}}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
                             <h6 class="my-0">Product Discount</h6>
                         </div>
-                        <span class="text-muted">{{Discount}}%</span>
+                        <span class="text-muted">{{odr_discount}}%</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
@@ -151,30 +172,43 @@
             </div>
         {% else %}
         
-        <div class="col-md-7 p-3 mx-auto">
+        <small>
+            <div class="row m-0 p-0">
+                <p class="h2 my-2">Total {{items}} Products In Your Cart</p>
+        {% for odr_cart in odr_cart %}
+        <div class="col-lg-6 p-3">
             <div class="card my-3">
                 <div class="row g-0">
-                    <div class="col-md-4">
-                    <img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{product.Image}}" alt="" class="img-fluid">
-                    </div>
-                    <div class="col-md-8">
+                    <div class="col-md-3">
+                        <img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{odr_cart.Product.Image}}" alt="" class="img-fluid">
+                        </div>
+                    <div class="col-md-9">
                         <div class="card-body">
-                            <h5 class="card-title fs-3">{{product.Name}}</h5>
+                            <h5 class="card-title fs-3">{{odr_cart.Product.Name}}</h5>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><b>Seller : </b><img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{product.Seller.Business_Logo}}" width="36px">{{product.Seller.Seller_Name}}</li>
-                                <li class="list-group-item"><b>Seller Location : </b>{{product.Seller.State}}, {{product.Seller.Country}}</li>
                                 
-                                <li class="list-group-item"><b>Category : </b>{{product.Category.Name}}</li>
-                                <li class="list-group-item">{% if product.Discount == 0 %}
-                                    <p class="fw-bold fs-4">${{product.Price}} </p>
+                                <li class="list-group-item"><b>Quantity : </b>{{odr_cart.Quantity}}</li>
+                                <li class="list-group-item">{% if odr_cart.Discount == 0 or odr_cart.Product.Discount == "0" %}
+                                    <p class="fw-bold fs-4">${{odr_cart.Product.Price }}.00 </p>
                                     {% else %}
-                                    <p class="fs-4"><b>${{product.Discount}}</b> <strike class="text-muted small fst-italic">${{product.Price}}</strike></p>
+                                    <p class="fs-4"><b>${{ odr_cart.Product.Discount }}.00</b> <strike class="text-muted small fst-italic">${{odr_cart.Product.Price}}.00</strike></p>
+                                    {% endif %}
+                                    
+                                    {% if odr_cart.Discount == 0 or odr_cart.Product.Discount == "0" %}
+                                    <p class="fw-bold fs-6"><b>Total :</b> ${{odr_cart.Price }}.00 </p>
+                                    {% else %}
+                                    <p class="fs-6"><b>Total :</b><b>${{ odr_cart.Discount }}.00</b> <strike class="text-muted small fst-italic">${{odr_cart.Price}}.00</strike></p>
                                     {% endif %}</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
+        </div>
+        {% endfor %}
+                
+            </div>
+        </small>
                 
                 <form action="{% url 'payment_page' %}" method="post">
                     {% csrf_token %}
@@ -234,7 +268,7 @@
                             <input type="hidden" name="order_id" value="{{order_id}}">
                             <input type="hidden" name="odr_amount" value="{{odr_amount}}">
                             <input type="hidden" name="p_id" value="{{product.id}}">
-                            <input type="hidden" name="type" value="product_payment">
+                            <input type="hidden" name="type" value="cart_checkout">
                         </div>
                     </div>
                     <div class="d-grid my-3 gap-2">
@@ -249,15 +283,21 @@
                     <p class="h3">Payment Details</p>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
-                            <h6 class="my-0">Product Price</h6>
+                            <h6 class="my-0">Total Price</h6>
                         </div>
-                        <span class="text-muted">${{product.Price}}</span>
+                        <span class="text-muted">${{odr_price}}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Total Products</h6>
+                        </div>
+                        <span class="text-muted">${{items}}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
                             <h6 class="my-0">Product Discount</h6>
                         </div>
-                        <span class="text-muted">{{Discount}}%</span>
+                        <span class="text-muted">{{odr_discount}}%</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
@@ -273,7 +313,6 @@
                     </li>
                     {% if product.Discount > 0 %}
                     <li class="list-group-item d-flex justify-content-between lh-sm">
-                        
                         <div>
                             <h6 class="my-0">You Save</h6>
                         </div>

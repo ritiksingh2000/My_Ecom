@@ -5,7 +5,8 @@ urlpatterns = [
     path('', HomePage, name='homepage'),
     path('add_cart/<int:id>', AddCart, name='add_cart'),
     path('remove_product/<int:id>', RemoveCart, name='remove_product'),
-    path('update_cart/', UpdateCart, name='update_cart'),
+    path('add_cart_product', AddProductQty, name='add_cart_product'),
+    path('SubProductQty', SubProductQty, name='sub_cart_product'),
     path('add_customer_review', AddCustomerReview, name='add_customer_review'),
 
     path('products_page/<int:id>', ProductsPage, name='products_page'),
@@ -19,6 +20,7 @@ urlpatterns = [
     path('buy_product/<int:id>', BuyProduct, name='buy_product'),
     path('payment_page', MakePayment, name='payment_page'),    
     path('payment_successfull/<str:order_id>', OrderSuccessfull, name='payment_successfull'),    
+    path('cart_checkout/', CartCheckout, name='cart_checkout'),    
 
     
     path('user/logout/', LogOut, name='logout'),

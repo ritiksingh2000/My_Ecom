@@ -3,83 +3,105 @@
 </h1>
 
 
-    <H3>To</H3>
-    <p><b>Name : </b> {{order.First_Name}} {{order.Last_Name}}</p>
-    <p><b>Email : </b> {{order.To}}</p>
-    <p><b>Phone No. : </b> {{order.PhoneNo}}</p>
-    <p><b>Address : </b> {{order.Address}}</p>
+<H3>To</H3>
+<p><b>Name : </b> {{order.First_Name}} {{order.Last_Name}}</p>
+<p><b>Email : </b> {{order.To}}</p>
+<p><b>Phone No. : </b> {{order.PhoneNo}}</p>
+<p><b>Address : </b> {{order.Address}}</p>
 
 <hr>
 
-    <h3>From</h3>
-    <p><b>Seller : </b> {{order.From.Seller_Name}}</p>
-    <p><b>Email : </b> {{order.From.Seller_Email}}</p>
-    <p><b>Phone No. : </b> {{order.From.Seller_PhoneNo}}</p>
-    <p><b>Address : </b> {{order.From.Address}}, {{order.From.State}}, {{order.From.Country}}-{{order.From.Pincode}}</p>
-    
+<h3>From</h3>
+<p><b>Seller : </b> {{order.From.Seller_Name}}</p>
+<p><b>Email : </b> {{order.From.Seller_Email}}</p>
+<p><b>Phone No. : </b> {{order.From.Seller_PhoneNo}}</p>
+<p><b>Address : </b> {{order.From.Address}}, {{order.From.State}}, {{order.From.Country}}-{{order.From.Pincode}}</p>
+
 
 <hr>
 
 
-    <center>
-        <h2>Order Details</h2>
-    </center>
-    
-        <style type="text/css">
-            .tg  {border-collapse:collapse;border-spacing:0;}
-            .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-              overflow:hidden;padding:10px 5px;word-break:normal;}
-            .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-              font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+<center>
+    <h2>Order Details</h2>
+</center>
+
+<style type="text/css">
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+        overflow:hidden;padding:10px 5px;word-break:normal;}
+        .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+            font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
             .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
-            </style>
-            <table class="tg">
+        </style>
+        <table class="tg">
             <thead>
-              <tr>
-                <th class="tg-0pky">Product Name</th>
-                <th class="tg-0pky">Qty.</th>
-                <th class="tg-0pky">Price</th>
-                <th class="tg-0pky">Status</th>
-              </tr>
+                <tr>
+                    <th class="tg-0pky">Product Name</th>
+                    <th class="tg-0pky">Qty.</th>
+                    <th class="tg-0pky">Price</th>
+                </tr>
             </thead>
             <tbody>
-              <tr>
-                
-                    <td class="tg-0pky">{{order.Product.Name}}</td>
-                    <td class="tg-0pky">1</td>
-                    <td class="tg-0pky">
-                        {% if order.Product.Discount == 0 %}
-                        {{order.Product.Price}}
+                {% if items > 1 %}
+                {% for order_product in order_product %}
+                <tr>
+                    
+                    <td class="tg-0pky" >{{order_product.Product.Name}}</td>
+                    <td class="tg-0pky" >{{order_product.Quantity}}</td>
+                    <td class="tg-0pky" >
+                        {% if order_product.Product.Discount == 0 %}
+                        ${{order_product.Product.Price}}
                         {% else %}
-                        {{order.Product.Discount}}
+                        ${{order_product.Product.Discount}}
                         {% endif %}
                     </td>
-                    <td class="tg-0pky">{{order.Status}}</td>
                 </tr>
+                {% endfor %}
                 
-            </tbody>
-        </table>
-    
-    <br>
-    <br>
-    <div >
+        <br>
+        <br>
+        <div >
             <h2 class="h3">Payment Details</h2>
             <ul style="list-style-type:none; ">
-                <li>Product Price - ${{order.Product.Price}}</li>
+                <li>Total Price - ${{order.Amount}}</li>
+                <li>Shipping - $0</li>
+                <li>TAX - $0</li>	
+                <li><h3><span>Total - <small>(USD)</small></span>
+                    <strong>${{order.Amount}}</li>
+                        
+                    </ul>
+        </div>
+                {% else %}
+                <tr>
+                    
+                    <td class="tg-0pky" >{{order_product.Product.Name}}</td>
+                    <td class="tg-0pky" >{{order_product.Quantity}}</td>
+                    <td class="tg-0pky" >${{order.Amount}} </td>
+                </tr>
+                
+        <br>
+        <br>
+        <div >
+            <h2 class="h3">Payment Details</h2>
+            <ul style="list-style-type:none; ">
+                <li>Product Price - ${{order.Amount}}</li>
                 <li>Discount - {{Discount}}% OFF</li>
                 <li>Shipping - $0</li>
                 <li>TAX - $0</li>	
                 <li><h3><span>Total - <small>(USD)</small></span>
-                    <strong>${% if order.Product.Discount == 0 %}
-                        {{order.Product.Price}}
-                        {% else %}
-                        {{order.Product.Discount}}
-                        {% endif %}</strong></h3></li>
-            
-            </ul>
-            
+                    <strong>${{order.Amount}}</li>
+                        
+                    </ul>
+        </div>
+                {% endif %}
+                
+            </tbody>
+        </table>
         
-    
-    
-
-    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
