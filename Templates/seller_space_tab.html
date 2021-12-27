@@ -137,12 +137,8 @@
             
                                 <tr>
                                     <td class="tg-0lax"><img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{odr_product.Product.Image}}" width="50px" class="img-fluid">{{odr_product.Product.Name}}</td>
-                                    <td class="tg-0lax">{{odr_product.Product.Quantity}}</td>
-                                    <td class="tg-0lax">{% if odr_product.Product.Discount == 0 %}
-                                        <p>${{order_product.Product.Price}}.00 </p>
-                                        {% else %}
-                                        <p>${{odr_product.Product.Discount}}.00</p>
-                                        {% endif %}</td>
+                                    <td class="tg-0lax">{{odr_product.Quantity}}</td>
+                                    <td class="tg-0lax">{{order.Amount}}</td>
                                         <td class="tg-0lax">{{order.Status}}</td>
                                         <td class="tg-0lax">{{order.Address}}</td>
                                         <td class="tg-0lax"><small><button class="btn btn-dark">Update</button></small></td>
