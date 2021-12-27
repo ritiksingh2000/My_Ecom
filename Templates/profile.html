@@ -15,6 +15,9 @@
                   <button class="nav-link active" id="pills-Profile-tab" data-bs-toggle="pill" data-bs-target="#pills-Profile" type="button" role="tab" aria-controls="pills-Profile" aria-selected="true">Profile</button>
                 </li>
                 <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="pills-Order-tab" data-bs-toggle="pill" data-bs-target="#pills-Order" type="button" role="tab" aria-controls="pills-Order" aria-selected="false">Order</button>
+                </li>
+                <li class="nav-item" role="presentation">
                   <button class="nav-link" id="pills-Verification-tab" data-bs-toggle="pill" data-bs-target="#pills-Verification" type="button" role="tab" aria-controls="pills-Verification" aria-selected="false">{{verified}}Verification</button>
                 </li>
                 {% if customer.p_verify == 1 and customer.e_verify == 1 %}
