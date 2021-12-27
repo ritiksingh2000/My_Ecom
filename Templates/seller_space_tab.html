@@ -132,18 +132,23 @@
                             <tbody>
                                 {% for order in order %}
                                 {% if order.From.Seller_Email == user.email %}
+                                {% for odr_product in odr_product %}
+                                {% if order.OrderNumber == odr_product.OrderNumber %}
+            
                                 <tr>
-                                    <td class="tg-0lax"><img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{order.Product.Image}}" width="50px" class="img-fluid">{{order.Product.Name}}</td>
-                                    <td class="tg-0lax">{{order.Quantity}}</td>
-                                    <td class="tg-0lax">{% if order.Product.Discount == 0 %}
-                                        <p>${{order.Product.Price}}.00 </p>
+                                    <td class="tg-0lax"><img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{order_product.Product.Image}}" width="50px" class="img-fluid">{{order_product.Product.Name}}</td>
+                                    <td class="tg-0lax">{{order_product.Product.Quantity}}</td>
+                                    <td class="tg-0lax">{% if order_product.Product.Discount == 0 %}
+                                        <p>${{order_product.Product.Price}}.00 </p>
                                         {% else %}
-                                        <p>${{order.Product.Discount}}.00</p>
+                                        <p>${{order_product.Product.Discount}}.00</p>
                                         {% endif %}</td>
                                         <td class="tg-0lax">{{order.Status}}</td>
                                         <td class="tg-0lax">{{order.Address}}</td>
                                         <td class="tg-0lax"><small><button class="btn btn-dark">Update</button></small></td>
                                     </tr>
+                                    {% endif %}
+                                    {% endfor %}
                                     {% endif %}
                                     {% endfor %}
                                     
