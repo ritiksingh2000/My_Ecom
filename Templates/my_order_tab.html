@@ -12,13 +12,10 @@
         <div class="col-md-6 p-2">
             <div class="card shadow mb-3">
                 <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{order.Product.Image}}" class="img-fluid rounded-start" >
-                    </div>
                     <div class="col-md-8">
                         <div class="card-body">
-                            <h5 class="card-title">{{order.Product.Name}}</h5>
-                            <p><b>Order Status :</b> {{order.Status}}</p>
+                            <h5 class="card-title">{{Your Order}}</h5>
+                            <p><b>Order Status :</b> {{order.Amount}} - {{order.Status}}</p>
                             <p class="card-text"><small class="text-muted">{{order.OrderDate}}</small></p>
                         </div>
                     </div>
