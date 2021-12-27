@@ -155,8 +155,10 @@ def UserProfile(request):
         is_order = Order.objects.filter(To=request.user.email).exists()
         if is_order == True:
             order = Order.objects.all().filter(To=request.user.email)
+            odr_product = OrderProduct.objects.all()
         else:
             order = None
+            odr_product = None
 
         
 
@@ -181,7 +183,7 @@ def UserProfile(request):
             else:
                 ip = request.META.get('REMOTE_ADDR')
                 cart = GuestCart.objects.all().filter(IP=ip)
-        return render(request, "profile.html", {"verified":verified, "customer":customer, "is_address":is_address, "address":address, "order":order, "seller":seller, "pp":pp, "product":product, "category":category, "cart":cart})
+        return render(request, "profile.html", {"verified":verified, "customer":customer, "is_address":is_address, "address":address, "order":order, "seller":seller,"odr_product":odr_product, "pp":pp, "product":product, "category":category, "cart":cart})
     
     else:
         info(request, "Please Login To Access Profile.")

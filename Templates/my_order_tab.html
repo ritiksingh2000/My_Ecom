@@ -9,12 +9,18 @@
         {% else %}
         {% for order in order %}
         {% if order.To == user.email %}
+        {% for odr_product in odr_product %}
+        {% if order.OrderNumber == odr_product.OrderNumber %}
+            
         <div class="col-md-6 p-2">
             <div class="card shadow mb-3">
                 <div class="row g-0">
-                    <div class="col-md-8">
+                    <div class="col-md-4">
+                        <img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{odr_product.Product.Image}}" alt="" class="img-fluid">
+                    </div>
+                        <div class="col-md-8">
                         <div class="card-body">
-                            <h5 class="card-title">Your Order Details</h5>
+                            <h5 class="card-title">{{odr_product.Product.Name}}</h5>
                             <p><b>Order Status :</b> ${{order.Amount}} - {{order.Status}}</p>
                             <p class="card-text"><small class="text-muted">{{order.OrderDate}}</small></p>
                         </div>
@@ -22,6 +28,10 @@
                 </div>
             </div>
         </div>
+
+        {% endif %}
+        {% endfor %}
+
         {% endif %}
         {% endfor %}
         {% endif %}
