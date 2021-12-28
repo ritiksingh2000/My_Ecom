@@ -178,7 +178,7 @@
                             </div>
                             <div class="modal-footer">
                                 {% if order.PaymentStatus == 0 %}
-                                <a href="{% url 'update_payment_ststus' order.id %}" class="btn btn-outline-dark">Update To Paid</a>
+                                <a href="{% url 'update_payment_status' order.id %}" class="btn btn-outline-dark">Update To Paid</a>
                                 {% endif %}
                                 
                                 {% if order.Status.id == 2 %}
