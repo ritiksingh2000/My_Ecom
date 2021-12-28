@@ -34,6 +34,8 @@ urlpatterns = [
     path('seller/update_seller_details/', UpdateSellerDetails, name="update_seller_details"),
     path('seller/add_product/', AddProduct, name="add_product"),
     path('seller/update_product/<int:id>', UpdateProduct, name="update_product"),
+    path('seller/update_order_status/<int:id>', UpdateOrderStatus , name="update_order_status"),
+    path('seller/update_payment_status/<int:id>', UpdateOrderPayment , name="seller_order_update"),
 
     path('update_image/', UpdateImage, name="update_image"),
     path('Verification/', Verify, name="phone_verification"),

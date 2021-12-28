@@ -27,7 +27,9 @@
                             <div class="modal-header">
                                 <h5 class="modal-title" id="user_order">Order | {{order.Status}}
                                     <br>
-                                    <p class="small text-muted"><b>OrderNumber : </b>{{order.OrderNumber}}</p>
+                                    <small>
+                                        <p class="small text-muted my-2"><b>OrderNumber : </b>{{order.OrderNumber}}</p>
+                                    </small>
                                 </h5>
                                 
                                 
@@ -59,7 +61,7 @@
                                     {% if order.OrderNumber == odr_product.OrderNumber %}
                                     
                                         <li class="list-group-item">
-                                            <img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{odr_product.Product.Image}}" width="80px" class="img-fluid"> {{odr_product.Product.Name}} | {{odr_product.Quantity}} | ${{odr_product.Amount}}
+                                            <img src="https://ritik-singh-projects.s3.ap-south-1.amazonaws.com/upload/{{odr_product.Product.Image}}" width="80px" class="img-fluid"> {{odr_product.Product.Name}} | <small><b>OTY. :</b></small> {{odr_product.Quantity}} | <small><b>Amount :</b></small>${{odr_product.Amount}}
                                         </li>
                                     
                                     {% endif %}

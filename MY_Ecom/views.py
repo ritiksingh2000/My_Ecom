@@ -970,3 +970,50 @@ def VerifyEmailURL(request):
     info(request, "Email Verification Completed.")
     
     return redirect("user_profile")
+
+def UpdateOrderPayment(request, order_id):
+    
+    order = Order.objects.get(id=order_id)
+    OS = OrderStatus.objects.get(id=2)
+    order.PaymentStatus = 1
+    order.Status = OS
+    order.save()
+    order_product = OrderProduct.objects.filter(OrderNumber=order.OrderNumber)
+    print(order_product)
+    items = order_product.count()
+    
+    if items <= 1:
+        order_product = OrderProduct.objects.get(OrderNumber=order.OrderNumber)
+    else:
+        order_product = OrderProduct.objects.all().filter(OrderNumber=order.OrderNumber)
+    seller = order.From.Seller_Email
+    from_email = "business.ritiksingh@gmail.com"
+    to = str(order.To) 
+    subject = "Order Confirmation From My Ecom"
+    message = render_to_string(template_name="email.html", context={"order":order, "order_product":order_product, 'items':items} )
+    plain_message = strip_tags(message)
+    
+    send_mail(subject, plain_message, from_email, [to, seller], html_message=message)
+    
+    info(request, f"Order:{order.OrderNumber} Has Paid For the Order.")
+    
+    return redirect("user_profile")
+
+def UpdateOrderStatus(request, order_id):
+    
+    ocs = int(request.GET['ocs'])
+    if ocs == 2:
+        order = Order.objects.get(id=order_id)
+        OS = OrderStatus.objects.get(id=3)
+        order.Status = OS
+        order.save()
+        info(request, f"Order:{order.OrderNumber} Is SuccessFully Shipped")
+    
+    if ocs == 3:
+        order = Order.objects.get(id=order_id)
+        OS = OrderStatus.objects.get(id=4)
+        order.Status = OS
+        order.save()
+        info(request, f"Order:{order.OrderNumber} Is SuccessFully Delivered")
+    
+    return redirect("user_profile")
