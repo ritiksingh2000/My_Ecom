@@ -971,9 +971,9 @@ def VerifyEmailURL(request):
     
     return redirect("user_profile")
 
-def UpdateOrderPayment(request, order_id):
+def UpdateOrderPayment(request, id):
     
-    order = Order.objects.get(id=order_id)
+    order = Order.objects.get(id=id)
     OS = OrderStatus.objects.get(id=2)
     order.PaymentStatus = 1
     order.Status = OS
@@ -999,18 +999,18 @@ def UpdateOrderPayment(request, order_id):
     
     return redirect("user_profile")
 
-def UpdateOrderStatus(request, order_id):
+def UpdateOrderStatus(request, id):
     
     ocs = int(request.GET['ocs'])
     if ocs == 2:
-        order = Order.objects.get(id=order_id)
+        order = Order.objects.get(id=id)
         OS = OrderStatus.objects.get(id=3)
         order.Status = OS
         order.save()
         info(request, f"Order:{order.OrderNumber} Is SuccessFully Shipped")
     
     if ocs == 3:
-        order = Order.objects.get(id=order_id)
+        order = Order.objects.get(id=id)
         OS = OrderStatus.objects.get(id=4)
         order.Status = OS
         order.save()
