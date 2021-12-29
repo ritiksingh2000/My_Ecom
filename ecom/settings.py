@@ -167,5 +167,4 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ['Gmail_Host_Email']
 EMAIL_HOST_PASSWORD = os.environ["Gmail_Host_Password"]
-EMAIL_USE_TLS = True
 
