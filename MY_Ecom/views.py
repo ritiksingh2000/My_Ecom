@@ -883,7 +883,7 @@ def OrderSuccessfull(request,order_id):
     message = render_to_string(template_name="email.html", context={"order":order, "order_product":order_product, 'items':items} )
     plain_message = strip_tags(message)
     
-    send_mail(subject, plain_message, from_email, [to], html_message=message)
+    send_mail(subject, plain_message, from_email, [to], html_message=message, fail_silently=True)
 
     return render(request, "OrderSuccessfull.html", {"category":category, "pp":pp, "cart":cart})
 
@@ -955,7 +955,7 @@ def VerifyEmail(request):
             body,
             os.environ['Gmail_Host_Email'],
             [s_to],
-            fail_silently=False,
+            fail_silently=True,
         )
         info(request, "An Email is sent to verify. ")
     else : 
@@ -993,7 +993,7 @@ def UpdateOrderPayment(request, id):
     message = render_to_string(template_name="email.html", context={"order":order, "order_product":order_product, 'items':items} )
     plain_message = strip_tags(message)
     
-    send_mail(subject, plain_message, from_email, [to], html_message=message)
+    send_mail(subject, plain_message, from_email, [to], html_message=message, fail_silently=True)
     
     info(request, f"Order:{order.OrderNumber} Has Paid For the Order.")
     
