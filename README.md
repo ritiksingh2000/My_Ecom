@@ -26,6 +26,7 @@
 - Creating Product
 - Editing Product
 - Buy The Product
+- Search The Products
 - Verification To Become A Seller
 - Invoice Generation
 - Contact Us Page
