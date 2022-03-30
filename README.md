@@ -27,11 +27,11 @@
 - Editing Product
 - Buy The Product
 - Search The Products
-- Verification To Become A Seller
+- Phone Number And Email Verification To Become A Seller 
 - Invoice Generation
 - Contact Us Page
 - About Us Page
-- Eail Service for Sending email on order, shipment status and to verify and become seller.
+- Email Service for Sending email on order and shipment status.
 - Categorised Products
 
 # **About Me**
